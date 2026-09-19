@@ -1,0 +1,59 @@
+"use client";
+
+import { useActionState } from "react";
+import { reviewAction } from "@/app/actions/review";
+import type { ReviewStage } from "@/lib/case-state";
+import { Button, FormError, Label, Textarea } from "@/components/ui";
+
+/** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回 */
+export function ReviewForm({ caseId, stage }: { caseId: string; stage: ReviewStage }) {
+  const [state, formAction, pending] = useActionState(reviewAction, {});
+
+  return (
+    <form action={formAction} className="mt-4 space-y-3 rounded-lg border border-hairline bg-surface-soft p-4">
+      <FormError message={state.error} />
+      <input type="hidden" name="caseId" value={caseId} />
+      <input type="hidden" name="stage" value={stage} />
+
+      {stage === "FIRST" ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="submit" name="action" value="approve" disabled={pending} className="px-4 py-2">
+            通过初审
+          </Button>
+          <span className="text-xs text-steel">通过后进入终审队列，录入人 +10 分</span>
+        </div>
+      ) : (
+        <div>
+          <Label>终审定级</Label>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="submit" name="action" value="grade" disabled={pending} className="px-4 py-2">
+              定级入库
+            </Button>
+            <span className="flex items-center gap-1.5 text-sm">
+              {(["A", "B", "C"] as const).map((g, i) => (
+                <label key={g} className="flex cursor-pointer items-center gap-1 rounded-sm border border-hairline bg-canvas px-2.5 py-1.5">
+                  <input type="radio" name="grade" value={g} defaultChecked={i === 0} required />
+                  <span className="font-medium">{g} 级</span>
+                </label>
+              ))}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div>
+        <Label htmlFor={`reason-${caseId}-${stage}`}>驳回理由（选择驳回时必填）</Label>
+        <Textarea
+          id={`reason-${caseId}-${stage}`}
+          name="reason"
+          rows={2}
+          maxLength={500}
+          placeholder="说明问题，方便录入人修改后重新提交"
+        />
+      </div>
+      <Button type="submit" name="action" value="reject" variant="danger" disabled={pending}>
+        驳回
+      </Button>
+    </form>
+  );
+}

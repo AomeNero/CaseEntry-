@@ -1,0 +1,70 @@
+import { db } from "@/lib/db";
+import { requireUser } from "@/lib/auth";
+import { ChangePasswordForm } from "@/components/change-password-form";
+import { Card, Empty, PageTitle } from "@/components/ui";
+
+const EVENT_LABELS: Record<string, string> = {
+  SUBMIT: "提交案例",
+  FIRST_PASS: "初审通过",
+  FINAL_GRADE: "终审定级",
+};
+
+export default async function ProfilePage() {
+  const user = await requireUser();
+  const [total, records] = await Promise.all([
+    db.pointsLedger.aggregate({ where: { userId: user.id }, _sum: { points: true } }),
+    db.pointsLedger.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      include: { case: { select: { title: true } } },
+    }),
+  ]);
+
+  return (
+    <div className="space-y-6">
+      <PageTitle title="个人中心" />
+
+      <Card className="flex flex-wrap items-center gap-x-8 gap-y-2">
+        <div>
+          <p className="text-sm text-steel">累计积分</p>
+          <p className="text-3xl font-semibold text-primary">{total._sum.points ?? 0}</p>
+        </div>
+        <div>
+          <p className="text-sm text-steel">用户名</p>
+          <p className="text-base text-charcoal">{user.username}</p>
+        </div>
+        <div>
+          <p className="text-sm text-steel">姓名</p>
+          <p className="text-base text-charcoal">{user.name}</p>
+        </div>
+      </Card>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-ink">积分流水（最近 50 条）</h2>
+        {records.length === 0 ? (
+          <Empty text="还没有积分记录" />
+        ) : (
+          <div className="divide-y divide-hairline-soft rounded-lg border border-hairline bg-canvas">
+            {records.map((r) => (
+              <div key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm text-charcoal">
+                    {EVENT_LABELS[r.eventType] ?? r.eventType} · {r.case.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-steel">{r.createdAt.toLocaleString("zh-CN")}</p>
+                </div>
+                <span className="shrink-0 text-sm font-semibold text-success">+{r.points}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-ink">修改密码</h2>
+        <ChangePasswordForm />
+      </section>
+    </div>
+  );
+}

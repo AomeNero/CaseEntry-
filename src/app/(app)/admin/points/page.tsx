@@ -1,0 +1,20 @@
+import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
+import { PointsConfigForm } from "@/components/admin/points-config-form";
+import { PageTitle } from "@/components/ui";
+
+export default async function AdminPointsPage() {
+  await requireAdmin();
+  const configs = await db.pointsConfig.findMany();
+  const values = Object.fromEntries(configs.map((c) => [c.key, c.value]));
+
+  return (
+    <div className="max-w-xl">
+      <PageTitle
+        title="积分配置"
+        desc="调整后立即生效，只影响之后发放的积分，不追溯历史流水"
+      />
+      <PointsConfigForm values={values} />
+    </div>
+  );
+}

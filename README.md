@@ -25,7 +25,8 @@ npm run start
 ## 测试
 
 ```bash
-npm run test             # vitest：状态机 + 积分发放（独立测试库 prisma/test.db）
+npm run test             # vitest：状态机决策矩阵、积分词汇/发放、可见性策略、查询口径等 54 例
+                         #（纯函数表驱动 + prisma/test.db 集成，测试文件串行运行）
 npx tsx scripts/smoke.ts # 冒烟：需先 npm run build && npm run start
 npx tsx scripts/clean-smoke-data.ts  # 清理冒烟测试数据
 ```
@@ -34,7 +35,7 @@ npx tsx scripts/clean-smoke-data.ts  # 清理冒烟测试数据
 
 | 角色 | 功能 |
 |---|---|
-| 所有人 | 注册（即生效）/ 登录；首页（最近入库动态 + 积分总榜/本月榜 TOP10）；案例库筛选（标题/分类/等级/时间段）；已入库案例详情与附件下载 |
+| 所有人 | 注册（即生效）/ 登录；首页（最近入库动态 + 积分总榜/本月榜 TOP10）；案例库筛选（标题/分类/等级/时间段，普通用户 = 已入库 ∪ 本人案例）；已入库案例详情与附件下载 |
 | 录入人 | 录入案例（标题/分类/附件）；我的案例；驳回案例修改重交；个人中心（积分流水/改密） |
 | 管理员 | 审核待办（初审→终审定级 A/B/C，可驳回）；账号管理（禁用/启用/提权/重置密码）；分类管理；积分配置；积分报表（按时间段查人员与积分） |
 
@@ -48,9 +49,10 @@ npx tsx scripts/clean-smoke-data.ts  # 清理冒烟测试数据
 ```
 
 - 每案例每事件积分只发一次（数据库唯一约束防刷分）
-- 积分值在「积分配置」页可调，只影响之后的发放
-- 过程态案例仅录入人本人与管理员可见；已入库全员可见可下载
+- 积分值在「积分配置」页可调，只影响之后的发放；页面积分文案实时读取配置
+- 过程态案例仅录入人本人与管理员可见；案例库列表对普通用户展示 已入库 ∪ 本人案例（他人过程态不可见，见 [ADR-0002](docs/adr/0002-可见性策略单点定义.md)）
 - 附件白名单：`.doc .docx .pdf .txt .md .ppt .pptx .xls .xlsx`，单文件 ≤20MB，扩展名+魔数双重校验
+- 状态写入统一经状态机裁决（`decideReview`/`decideResubmit` + 写时守卫，见 [ADR-0001](docs/adr/0001-案例状态机唯一执法点.md)）
 
 ## 技术栈
 
@@ -63,8 +65,13 @@ npx tsx scripts/clean-smoke-data.ts  # 清理冒烟测试数据
 ## 目录结构
 
 ```
+CONTEXT.md                  领域词汇与模块地图（开发/审查先读）
+docs/adr/                   架构决策记录（5 条）
 prisma/schema.prisma        数据模型（User/Category/Case/PointsLedger/PointsConfig）
-src/lib/                    db、auth、password、case-state（状态机）、points、upload、validation
+src/lib/                    纯词汇层：case-state（状态机/decide*）、case-visibility（可见性）、
+                            points-vocab（积分词汇）、roles、session-token（令牌格式）
+                            IO 层：db、auth（守卫）、password、points（发放）、points-queries、
+                            case-queries（读取）、upload、validation、form（表单解析）
 src/app/(auth)/             登录、注册
 src/app/(app)/              首页、案例库、详情、录入、我的案例、个人中心、admin 后台
 src/app/actions/            server actions（auth/case/review/profile/admin）
@@ -72,6 +79,14 @@ src/components/             UI 组件、徽章、导航、表单
 scripts/                    冒烟测试与数据清理
 uploads/                    附件存储（gitignore）
 ```
+
+## 架构
+
+- 领域术语（案例/初审/终审/定级/入库/驳回/积分流水…）以 [CONTEXT.md](CONTEXT.md) 为准
+- 关键决策与其理由见 [docs/adr/](docs/adr/)：状态机唯一执法点、可见性单点定义、积分词汇单一来源、
+  会话令牌单一实现、查询形状收敛（筛选一律 AND 在可见性之内）
+- 纯词汇文件（case-state / points-vocab / roles / session-token / case-visibility）零运行时依赖，
+  client 组件与脚本可安全引用
 
 ## 部署提示
 

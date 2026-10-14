@@ -6,7 +6,8 @@ import { requireAdmin } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
 import { pointsConfigEntrySchema } from "@/lib/validation";
 import { POINT_CONFIG_KEYS, POINT_CONFIG_LABELS, type PointConfigKey } from "@/lib/points-vocab";
-import type { FormState } from "./auth";
+import { isRole } from "@/lib/roles";
+import type { FormState } from "@/lib/form";
 
 /** 禁用/启用账号（不能操作自己） */
 export async function setUserDisabledAction(formData: FormData): Promise<void> {
@@ -25,7 +26,7 @@ export async function setUserRoleAction(formData: FormData): Promise<void> {
   const userId = String(formData.get("userId") ?? "");
   const role = String(formData.get("role") ?? "");
   if (!userId || userId === admin.id) return;
-  if (role !== "USER" && role !== "ADMIN") return;
+  if (!isRole(role)) return;
 
   await db.user.update({ where: { id: userId }, data: { role } });
   revalidatePath("/admin/users");

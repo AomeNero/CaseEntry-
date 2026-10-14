@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { ROLE } from "@/lib/roles";
 import { setUserDisabledAction, setUserRoleAction } from "@/app/actions/admin";
 import { ResetPasswordButton } from "@/components/admin/reset-password-button";
 import { Button, PageTitle } from "@/components/ui";
@@ -38,12 +39,12 @@ export default async function AdminUsersPage() {
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-sm px-2 py-0.5 text-xs font-semibold ${
-                        u.role === "ADMIN"
+                        u.role === ROLE.ADMIN
                           ? "bg-tint-lavender text-primary-deep"
                           : "bg-surface text-slate"
                       }`}
                     >
-                      {u.role === "ADMIN" ? "管理员" : "用户"}
+                      {u.role === ROLE.ADMIN ? "管理员" : "用户"}
                     </span>
                   </td>
                   <td className="px-4 py-3">{u._count.cases}</td>
@@ -66,9 +67,9 @@ export default async function AdminUsersPage() {
                       <div className="flex flex-wrap items-start gap-2">
                         <form action={setUserRoleAction}>
                           <input type="hidden" name="userId" value={u.id} />
-                          <input type="hidden" name="role" value={u.role === "ADMIN" ? "USER" : "ADMIN"} />
+                          <input type="hidden" name="role" value={u.role === ROLE.ADMIN ? ROLE.USER : ROLE.ADMIN} />
                           <Button type="submit" variant="secondary" className="px-2.5 py-1 text-xs">
-                            {u.role === "ADMIN" ? "降为用户" : "提为管理员"}
+                            {u.role === ROLE.ADMIN ? "降为用户" : "提为管理员"}
                           </Button>
                         </form>
                         <form action={setUserDisabledAction}>

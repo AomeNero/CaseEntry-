@@ -10,11 +10,12 @@ import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, PageTitle } from "@/components/ui";
 import type { CaseStatus, Grade, ReviewStage } from "@/lib/case-state";
 import { canView } from "@/lib/case-visibility";
+import { ROLE } from "@/lib/roles";
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await requireUser();
-  const isAdmin = user.role === "ADMIN";
+  const isAdmin = user.role === ROLE.ADMIN;
 
   const kase = await db.case.findUnique({
     where: { id },

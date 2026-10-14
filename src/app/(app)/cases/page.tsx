@@ -6,6 +6,7 @@ import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, Empty, Input, Label, Select, PageTitle } from "@/components/ui";
 import { GRADES } from "@/lib/case-state";
 import { visibilityWhere } from "@/lib/case-visibility";
+import { ROLE } from "@/lib/roles";
 
 type SP = Record<string, string | string[] | undefined>;
 function one(sp: SP, key: string): string {
@@ -16,7 +17,7 @@ function one(sp: SP, key: string): string {
 export default async function CasesPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
   const user = await requireUser();
-  const isAdmin = user.role === "ADMIN";
+  const isAdmin = user.role === ROLE.ADMIN;
 
   const q = one(sp, "q").trim();
   const categoryId = one(sp, "categoryId");

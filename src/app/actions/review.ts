@@ -2,11 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { getCurrentUser } from "@/lib/auth";
 import { awardPoints } from "@/lib/points";
 import { reviewActionSchema } from "@/lib/validation";
 import { decideReview, type CaseStatus, type ReviewActionInput } from "@/lib/case-state";
-import type { FormState } from "./auth";
+import { getCurrentAdmin } from "@/lib/auth";
+import type { FormState } from "@/lib/form";
 
 /**
  * 审核动作（初审/终审共用）。
@@ -15,8 +15,8 @@ import type { FormState } from "./auth";
  * 状态变更与积分发放同一事务。
  */
 export async function reviewAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") return { error: "仅管理员可执行审核操作" };
+  const user = await getCurrentAdmin();
+  if (!user) return { error: "仅管理员可执行审核操作" };
 
   const caseId = String(formData.get("caseId") ?? "");
   if (!caseId) return { error: "参数错误" };

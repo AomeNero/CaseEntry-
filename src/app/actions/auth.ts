@@ -5,8 +5,8 @@ import { db } from "@/lib/db";
 import { createSession, destroySession } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { loginSchema, registerSchema } from "@/lib/validation";
-
-export type FormState = { error?: string; success?: string };
+import { ROLE, isRole } from "@/lib/roles";
+import type { FormState } from "@/lib/form";
 
 export async function loginAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = loginSchema.safeParse({
@@ -21,7 +21,13 @@ export async function loginAction(_prev: FormState, formData: FormData): Promise
   }
   if (user.disabled) return { error: "账号已被禁用，请联系管理员" };
 
-  await createSession({ sub: user.id, username: user.username, name: user.name, role: user.role as "USER" | "ADMIN" });
+  await createSession({
+    sub: user.id,
+    username: user.username,
+    name: user.name,
+    // 会话角色仅作冗余载荷；实际权限每请求回库读取。DB 出现垃圾值时回落 USER
+    role: isRole(user.role) ? user.role : ROLE.USER,
+  });
   redirect("/");
 }
 
@@ -43,7 +49,7 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
       name: parsed.data.name,
     },
   });
-  await createSession({ sub: user.id, username: user.username, name: user.name, role: "USER" });
+  await createSession({ sub: user.id, username: user.username, name: user.name, role: ROLE.USER });
   redirect("/");
 }
 

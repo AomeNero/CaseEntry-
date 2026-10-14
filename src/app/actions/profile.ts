@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { changePasswordSchema } from "@/lib/validation";
-import type { FormState } from "./auth";
+import type { FormState } from "@/lib/form";
 
 export async function changePasswordAction(
   _prev: FormState,

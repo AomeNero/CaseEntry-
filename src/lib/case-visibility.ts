@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { ROLE } from "./roles";
 
 /**
  * 可见性策略（唯一来源，REQUIREMENTS：已入库全员可见；过程态仅录入人本人 + admin）。
@@ -7,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 
 interface Viewer {
   id: string;
-  role: string; // "USER" | "ADMIN"（Role 常量见 lib/auth）
+  role: string;
 }
 
 interface CaseRef {
@@ -20,12 +21,12 @@ export function canView(viewer: Viewer, kase: CaseRef): boolean {
   return (
     kase.status === "PUBLISHED" ||
     kase.authorId === viewer.id ||
-    viewer.role === "ADMIN"
+    viewer.role === ROLE.ADMIN
   );
 }
 
 /** 列表查询条件："此人可见的全部案例"。管理员不加限制；普通用户 = 已入库 ∪ 本人案例。 */
 export function visibilityWhere(viewer: Viewer): Prisma.CaseWhereInput {
-  if (viewer.role === "ADMIN") return {};
+  if (viewer.role === ROLE.ADMIN) return {};
   return { OR: [{ status: "PUBLISHED" }, { authorId: viewer.id }] };
 }

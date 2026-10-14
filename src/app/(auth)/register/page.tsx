@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { registerAction, type FormState } from "@/app/actions/auth";
+import { registerAction } from "@/app/actions/auth";
+import type { FormState } from "@/lib/form";
 import { Button, FormError, Input, Label } from "@/components/ui";
 
 const initial: FormState = {};

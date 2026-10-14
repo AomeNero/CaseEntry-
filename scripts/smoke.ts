@@ -5,8 +5,8 @@
  */
 import fs from "fs";
 import path from "path";
-import { SignJWT } from "jose";
 import { PrismaClient } from "@prisma/client";
+import { COOKIE_NAME, signSessionToken, type SessionPayload } from "../src/lib/session-token";
 
 const BASE = "http://localhost:3000";
 const db = new PrismaClient();
@@ -19,16 +19,11 @@ const env = Object.fromEntries(
     .filter((l) => l.includes("="))
     .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1).replace(/^"|"$/g, "")])
 );
+process.env.AUTH_SECRET ??= env.AUTH_SECRET;
 
-const secret = new TextEncoder().encode(env.AUTH_SECRET);
-
-async function makeCookie(user: { sub: string; username: string; name: string; role: string }) {
-  const token = await new SignJWT({ ...user })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("7d")
-    .sign(secret);
-  return `session=${token}`;
+async function makeCookie(user: SessionPayload) {
+  const token = await signSessionToken(user);
+  return `${COOKIE_NAME}=${token}`;
 }
 
 let pass = 0;

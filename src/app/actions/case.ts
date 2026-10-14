@@ -7,7 +7,7 @@ import { saveUpload } from "@/lib/upload";
 import { awardPoints } from "@/lib/points";
 import { caseFormSchema } from "@/lib/validation";
 import { decideResubmit, type CaseStatus, type ReviewStage } from "@/lib/case-state";
-import type { FormState } from "./auth";
+import type { FormState } from "@/lib/form";
 
 /** 提交新案例：表单校验 → 附件保存 → 建案例 + 发提交积分（同事务） */
 export async function createCaseAction(_prev: FormState, formData: FormData): Promise<FormState> {

@@ -34,7 +34,7 @@
 | **会话令牌** | `src/lib/session-token.ts` | token 格式唯一实现；auth（cookie）与 smoke（HTTP）双 adapter（[ADR-0004](docs/adr/0004-会话令牌格式单一实现.md)） |
 | **认证守卫** | `src/lib/auth.ts` | `getCurrentUser`（可空）/ `getCurrentAdmin`（可空）/ `requireUser`/`requireAdmin`（redirect）——失败模式属于 interface |
 | **表单解析** | `src/lib/form.ts` | `FormState` + `parseForm`（schema 解析统一入口） |
-| **附件存储** | `src/lib/upload.ts` | save（白名单/魔数/20MB/落盘）+ read（缺失返回 null、故障抛出，404/500 由表面决定）；`dir` 参数仅测试注入 |
+| **附件存储** | `src/lib/upload.ts` | save（必传/白名单/魔数/20MB/落盘，失败一律返回 error 文案、不抛出）+ read（缺失返回 null、故障抛出，404/500 由表面决定）；`dir` 参数仅测试注入 |
 | **存储路径** | `src/lib/upload-path.ts` | `UPLOAD_DIR`/`uploadPath` 纯常量唯一出处；upload 与 smoke 双消费（ADR-0004 双 adapter 模式） |
 | **密码哈希** | `src/lib/password.ts` | 有意保留的薄 adapter（钉住 bcrypt cost=10） |
 

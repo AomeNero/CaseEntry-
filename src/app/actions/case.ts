@@ -20,14 +20,8 @@ export async function createCaseAction(_prev: FormState, formData: FormData): Pr
   if (!parsed.ok) return { error: parsed.error };
 
   const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) return { error: "请上传附件" };
-
-  let saved;
-  try {
-    saved = await saveUpload(file);
-  } catch (e) {
-    return { error: e instanceof Error ? e.message : "附件保存失败" };
-  }
+  const saved = await saveUpload(file instanceof File ? file : null);
+  if ("error" in saved) return saved;
 
   const category = await db.category.findUnique({ where: { id: parsed.data.categoryId } });
   if (!category) return { error: "所选分类不存在" };
@@ -64,7 +58,6 @@ export async function resubmitCaseAction(_prev: FormState, formData: FormData): 
   if (!parsed.ok) return { error: parsed.error };
 
   const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) return { error: "请重新上传附件" };
 
   const kase = await db.case.findUnique({ where: { id: caseId } });
   if (!kase || kase.authorId !== user.id) return { error: "案例不存在或无权操作" };
@@ -72,12 +65,8 @@ export async function resubmitCaseAction(_prev: FormState, formData: FormData): 
   const decision = decideResubmit(kase.status as CaseStatus, kase.rejectedStage as ReviewStage | null);
   if (!decision.ok) return { error: decision.error };
 
-  let saved;
-  try {
-    saved = await saveUpload(file);
-  } catch (e) {
-    return { error: e instanceof Error ? e.message : "附件保存失败" };
-  }
+  const saved = await saveUpload(file instanceof File ? file : null);
+  if ("error" in saved) return saved;
 
   // 写时守卫：并发下状态已变则落空
   const { count } = await db.case.updateMany({

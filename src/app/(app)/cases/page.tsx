@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, Empty, Input, Label, Select, PageTitle } from "@/components/ui";
 import { GRADES } from "@/lib/case-state";
+import { visibilityWhere } from "@/lib/case-visibility";
 
 type SP = Record<string, string | string[] | undefined>;
 function one(sp: SP, key: string): string {
@@ -27,12 +28,9 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
 
   const conditions: Prisma.CaseWhereInput[] = [];
 
-  // 可见性：普通用户仅已入库；管理员可按状态筛（默认全部）
-  if (isAdmin) {
-    if (status) conditions.push({ status });
-  } else {
-    conditions.push({ status: "PUBLISHED" });
-  }
+  // 可见性策略见 lib/case-visibility：普通用户 = 已入库 ∪ 本人案例；管理员可按状态筛（默认全部）
+  conditions.push(visibilityWhere(user));
+  if (isAdmin && status) conditions.push({ status });
   if (q) conditions.push({ title: { contains: q } });
   if (categoryId) conditions.push({ categoryId });
   if ((GRADES as readonly string[]).includes(grade)) conditions.push({ grade });

@@ -2,8 +2,9 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { canView } from "@/lib/case-visibility";
 
-/** 附件下载：已入库全员可下；过程态仅录入人本人与管理员 */
+/** 附件下载：可见性策略见 lib/case-visibility；本表面的错误形态是 401/403 */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
   if (!user) return new Response("未登录", { status: 401 });
@@ -12,9 +13,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const kase = await db.case.findUnique({ where: { id } });
   if (!kase) return new Response("案例不存在", { status: 404 });
 
-  const allowed =
-    kase.status === "PUBLISHED" || kase.authorId === user.id || user.role === "ADMIN";
-  if (!allowed) return new Response("无权访问", { status: 403 });
+  if (!canView(user, kase)) return new Response("无权访问", { status: 403 });
 
   try {
     const buf = await readFile(path.join(process.cwd(), "uploads", kase.filePath));

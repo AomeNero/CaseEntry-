@@ -107,11 +107,12 @@ async function main() {
   check("首页有本月积分榜", r.text.includes("本月积分榜"));
 
   r = await get("/cases", u1Cookie);
-  const seesPublishedOnly =
-    r.text.includes("冒烟-已入库案例") &&
-    !r.text.includes("冒烟-待初审案例") &&
-    !r.text.includes("冒烟-已驳回案例");
-  check("案例库仅见已入库案例", seesPublishedOnly);
+  const libraryVisibility =
+    r.text.includes("冒烟-已入库案例") && // 他人已入库可见
+    r.text.includes("冒烟-已驳回案例") && // 本人过程态（已驳回）可见
+    !r.text.includes("冒烟-待初审案例") && // 他人待初审不可见
+    !r.text.includes("冒烟-待终审案例"); // 他人待终审不可见
+  check("案例库=已入库∪本人案例（他人过程态不可见）", libraryVisibility);
 
   r = await get(`/cases/${caseA.id}`, u1Cookie);
   check("非本人过程态案例 404", r.status === 404, `got ${r.status}`);

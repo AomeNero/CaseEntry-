@@ -8,6 +8,7 @@ import { CaseForm } from "@/components/case-form";
 import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, PageTitle } from "@/components/ui";
 import type { CaseStatus, Grade, ReviewStage } from "@/lib/case-state";
+import { canView } from "@/lib/case-visibility";
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,9 +21,9 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
   });
   if (!kase) notFound();
 
-  // 可见性：已入库全员可见；过程态仅录入人本人与管理员
+  // 可见性策略见 lib/case-visibility（唯一来源）；本表面的错误形态是 404
   const isAuthor = kase.authorId === user.id;
-  if (kase.status !== "PUBLISHED" && !isAuthor && !isAdmin) notFound();
+  if (!canView(user, kase)) notFound();
 
   const categories = isAuthor && kase.status === "REJECTED" ? await db.category.findMany({ orderBy: { name: "asc" } }) : [];
   const reviewStage: ReviewStage | null =

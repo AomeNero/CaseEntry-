@@ -67,7 +67,8 @@ export async function saveUpload(file: File | null, dir: string = UPLOAD_DIR): P
   try {
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, stored), buf);
-  } catch {
+  } catch (e) {
+    console.error("[upload] 附件写盘失败", e);
     return { error: "附件保存失败" };
   }
 

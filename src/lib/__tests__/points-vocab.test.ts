@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { GRADES } from "../case-state";
 import {
   configKeyFor,
   POINT_CONFIG_KEYS,
@@ -47,6 +48,12 @@ describe("积分事件 → 配置键映射", () => {
   it("终审定级按等级取配置键", () => {
     expect(configKeyFor("FINAL_GRADE", "A")).toBe("GRADE_A");
     expect(configKeyFor("FINAL_GRADE", "C")).toBe("GRADE_C");
+  });
+
+  it("全部等级都有对应配置键（GRADE_ 前缀派生完备）", () => {
+    for (const g of GRADES) {
+      expect(POINT_CONFIG_KEYS).toContain(configKeyFor("FINAL_GRADE", g));
+    }
   });
 
   it("终审事件缺等级时抛错", () => {

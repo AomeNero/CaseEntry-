@@ -1,14 +1,11 @@
-import { db } from "@/lib/db";
 import { createCaseAction } from "@/app/actions/case";
 import { getPointConfigValues } from "@/lib/points";
+import { listCategories } from "@/lib/case-queries";
 import { CaseForm } from "@/components/case-form";
 import { PageTitle } from "@/components/ui";
 
 export default async function NewCasePage() {
-  const [categories, points] = await Promise.all([
-    db.category.findMany({ orderBy: { name: "asc" } }),
-    getPointConfigValues(),
-  ]);
+  const [categories, points] = await Promise.all([listCategories(), getPointConfigValues()]);
 
   return (
     <div>

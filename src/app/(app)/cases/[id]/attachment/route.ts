@@ -25,8 +25,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         "Content-Disposition": `attachment; filename="case${kase.fileType}"; filename*=UTF-8''${encoded}`,
       },
     });
-  } catch {
-    // 读路径真实故障（权限/磁盘）——不再伪装成 404
+  } catch (e) {
+    // 读路径真实故障（权限/磁盘）——不再伪装成 404，服务器端留下错误上下文
+    console.error("[attachment] 附件读取失败", e);
     return new Response("附件读取失败", { status: 500 });
   }
 }

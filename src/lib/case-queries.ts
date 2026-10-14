@@ -2,7 +2,7 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { db } from "./db";
 import { GRADES } from "./case-state";
-import { visibilityWhere } from "./case-visibility";
+import { visibilityWhere, type Viewer } from "./case-visibility";
 
 /**
  * 案例读取（重复形状的唯一实现）：案例库、详情、首页动态、管理员队列、分类字典。
@@ -23,16 +23,16 @@ export interface CaseListFilters {
   from?: string;
   /** 提交日期止（YYYY-MM-DD，含当天） */
   to?: string;
-  /** 状态筛选（仅管理员生效，普通用户的可见性条件不因本参数放宽） */
+  /** 状态筛选（所有角色生效，始终叠加在可见性条件之内只收窄） */
   status?: string;
-  /** 录入人姓名/用户名（仅管理员生效） */
+  /** 录入人姓名/用户名（所有角色生效，同上只在可见范围内收窄） */
   author?: string;
 }
 
 /** 案例库列表：可见性策略 + 筛选，提交时间倒序，上限 100。
  *  筛选条件一律 AND 在可见性条件之内——只收窄、永不放宽，任何调用方都无法借此越权。 */
 export async function listCases(
-  viewer: { id: string; role: string },
+  viewer: Viewer,
   f: CaseListFilters = {}
 ): Promise<CaseWithRelations[]> {
   const conditions: Prisma.CaseWhereInput[] = [visibilityWhere(viewer)];

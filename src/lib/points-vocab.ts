@@ -45,11 +45,18 @@ export const POINT_DEFAULTS: ReadonlyArray<{ key: PointConfigKey; value: number 
   { key: "GRADE_C", value: 20 },
 ];
 
+/** 等级 → 配置键映射（Record 保证 Grade 扩展时此处缺键即编译报错，恢复 ADR-0003 的编译期保障） */
+const GRADE_CONFIG_KEYS: Record<Grade, PointConfigKey> = {
+  A: "GRADE_A",
+  B: "GRADE_B",
+  C: "GRADE_C",
+};
+
 /** 积分事件 → PointsConfig 键（终审定级按等级取键） */
 export function configKeyFor(event: PointEvent, grade?: Grade): PointConfigKey {
   if (event === "FINAL_GRADE") {
     if (!grade) throw new Error("终审定级积分必须提供等级");
-    return `GRADE_${grade}` as PointConfigKey;
+    return GRADE_CONFIG_KEYS[grade];
   }
   return event;
 }

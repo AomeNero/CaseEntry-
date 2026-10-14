@@ -6,7 +6,8 @@ import { ROLE } from "./roles";
  * 单案例判定与列表查询条件都从这里取，表面自选错误形态（404 / 403 / 查询过滤）。
  */
 
-interface Viewer {
+/** 查看者（role 为 DB 存储的字符串，取值以 roles 单点为准，内部比较用 ROLE 常量） */
+export interface Viewer {
   id: string;
   role: string;
 }

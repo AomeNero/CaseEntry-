@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { awardPoints } from "@/lib/points";
 import { reviewActionSchema } from "@/lib/validation";
-import { parseForm } from "@/lib/form";
+import { parseForm, safeRedirectTo } from "@/lib/form";
 import { decideReview, type CaseStatus, type ReviewActionInput } from "@/lib/case-state";
 import { getCurrentAdmin } from "@/lib/auth";
 import type { FormState } from "@/lib/form";
@@ -22,9 +22,9 @@ export async function reviewAction(_prev: FormState, formData: FormData): Promis
   const caseId = String(formData.get("caseId") ?? "");
   if (!caseId) return { error: "参数错误" };
 
-  // 完成后的跳转目标属于调用方（审核待办→/admin；案例详情→回详情页）；只接受站内路径
+  // 完成后的跳转目标属于调用方（审核待办→/admin；案例详情→回详情页）；站内守卫见 safeRedirectTo
   const redirectToRaw = String(formData.get("redirectTo") ?? "");
-  const redirectTo = redirectToRaw.startsWith("/") ? redirectToRaw : "/admin";
+  const redirectTo = safeRedirectTo(redirectToRaw, "/admin");
 
   const parsed = parseForm(reviewActionSchema, {
     stage: formData.get("stage"),

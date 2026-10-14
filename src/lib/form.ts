@@ -12,3 +12,10 @@ export function parseForm<S extends z.ZodTypeAny>(schema: S, raw: Record<string,
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   return { ok: true, data: parsed.data };
 }
+
+/** 站内跳转目标守卫：仅接受单个 / 开头的站内路径，其余回落 fallback。
+ *  拒绝 //host 与 /\host——两者都是协议相对地址，redirect 会跳站外。 */
+export function safeRedirectTo(raw: string, fallback: string): string {
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return fallback;
+  return raw;
+}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { getCaseDetail, listCategories } from "@/lib/case-queries";
 import { getPointConfigValues } from "@/lib/points";
 import { resubmitCaseAction } from "@/app/actions/case";
 import { ReviewForm } from "@/components/review-form";
@@ -17,17 +17,14 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
   const user = await requireUser();
   const isAdmin = user.role === ROLE.ADMIN;
 
-  const kase = await db.case.findUnique({
-    where: { id },
-    include: { author: true, category: true },
-  });
+  const kase = await getCaseDetail(id);
   if (!kase) notFound();
 
   // 可见性策略见 lib/case-visibility（唯一来源）；本表面的错误形态是 404
   const isAuthor = kase.authorId === user.id;
   if (!canView(user, kase)) notFound();
 
-  const categories = isAuthor && kase.status === "REJECTED" ? await db.category.findMany({ orderBy: { name: "asc" } }) : [];
+  const categories = isAuthor && kase.status === "REJECTED" ? await listCategories() : [];
   const points = await getPointConfigValues();
   const reviewStage: ReviewStage | null =
     kase.status === "PENDING_FIRST" ? "FIRST" : kase.status === "PENDING_FINAL" ? "FINAL" : null;

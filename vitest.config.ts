@@ -10,5 +10,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globalSetup: ["./vitest.global-setup.ts"],
+    // 多个集成测试文件共享同一个 sqlite 测试库（prisma/test.db），必须串行运行
+    fileParallelism: false,
   },
 });

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { adminQueues } from "@/lib/case-queries";
 import { getPointConfigValues } from "@/lib/points";
 import { ReviewForm } from "@/components/review-form";
 import { Card, Empty, PageTitle } from "@/components/ui";
@@ -60,19 +60,8 @@ function QueueSection({
 export default async function AdminQueuePage() {
   await requireAdmin();
 
-  const [firstQueue, finalQueue, points] = await Promise.all([
-    db.case.findMany({
-      where: { status: "PENDING_FIRST" },
-      orderBy: { submittedAt: "asc" },
-      take: 20,
-      include: { author: true },
-    }),
-    db.case.findMany({
-      where: { status: "PENDING_FINAL" },
-      orderBy: { firstReviewAt: "asc" },
-      take: 20,
-      include: { author: true },
-    }),
+  const [{ firstQueue, finalQueue }, points] = await Promise.all([
+    adminQueues(),
     getPointConfigValues(),
   ]);
 

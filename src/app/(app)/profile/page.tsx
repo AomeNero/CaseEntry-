@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { userTotalPoints } from "@/lib/points-queries";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { Card, Empty, PageTitle } from "@/components/ui";
 import { POINT_EVENT_LABELS, type PointEvent } from "@/lib/points-vocab";
@@ -7,7 +8,7 @@ import { POINT_EVENT_LABELS, type PointEvent } from "@/lib/points-vocab";
 export default async function ProfilePage() {
   const user = await requireUser();
   const [total, records] = await Promise.all([
-    db.pointsLedger.aggregate({ where: { userId: user.id }, _sum: { points: true } }),
+    userTotalPoints(user.id),
     db.pointsLedger.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
@@ -23,7 +24,7 @@ export default async function ProfilePage() {
       <Card className="flex flex-wrap items-center gap-x-8 gap-y-2">
         <div>
           <p className="text-sm text-steel">累计积分</p>
-          <p className="text-3xl font-semibold text-primary">{total._sum.points ?? 0}</p>
+          <p className="text-3xl font-semibold text-primary">{total}</p>
         </div>
         <div>
           <p className="text-sm text-steel">用户名</p>

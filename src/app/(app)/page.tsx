@@ -1,26 +1,10 @@
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { pointsLeaderboard, type LeaderboardRow } from "@/lib/points-queries";
+import { recentPublished } from "@/lib/case-queries";
 import { GradeBadge } from "@/components/badges";
 import { Card, Empty, PageTitle } from "@/components/ui";
 
-async function getLeaderboard(since?: Date) {
-  const rows = await db.pointsLedger.groupBy({
-    by: ["userId"],
-    _sum: { points: true },
-    where: since ? { createdAt: { gte: since } } : undefined,
-    orderBy: { _sum: { points: "desc" } },
-    take: 10,
-  });
-  const users = await db.user.findMany({ where: { id: { in: rows.map((r) => r.userId) } } });
-  const nameById = new Map(users.map((u) => [u.id, u.name]));
-  return rows.map((r, i) => ({
-    rank: i + 1,
-    name: nameById.get(r.userId) ?? "已删除用户",
-    points: r._sum.points ?? 0,
-  }));
-}
-
-function Board({ title, rows }: { title: string; rows: Awaited<ReturnType<typeof getLeaderboard>> }) {
+function Board({ title, rows }: { title: string; rows: LeaderboardRow[] }) {
   return (
     <Card>
       <h2 className="mb-3 text-base font-semibold text-ink">{title}</h2>
@@ -49,14 +33,9 @@ function Board({ title, rows }: { title: string; rows: Awaited<ReturnType<typeof
 
 export default async function HomePage() {
   const [feed, totalBoard, monthlyBoard] = await Promise.all([
-    db.case.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { publishedAt: "desc" },
-      take: 10,
-      include: { author: true, category: true },
-    }),
-    getLeaderboard(),
-    getLeaderboard(new Date(new Date().getFullYear(), new Date().getMonth(), 1)),
+    recentPublished(),
+    pointsLeaderboard(),
+    pointsLeaderboard(10, new Date(new Date().getFullYear(), new Date().getMonth(), 1)),
   ]);
 
   return (

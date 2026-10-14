@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { pointsReport } from "@/lib/points-queries";
 import { Button, Card, Input, Label, PageTitle } from "@/components/ui";
 
 type SP = Record<string, string | string[] | undefined>;
@@ -20,45 +20,11 @@ export default async function AdminReportPage({ searchParams }: { searchParams: 
   const from = new Date(fromStr);
   const to = new Date(`${toStr}T23:59:59`);
 
-  // 期间积分流水、期间提交案例数、累计积分 三个维度聚合
-  const [ledgerRows, caseRows, totals] = await Promise.all([
-    db.pointsLedger.groupBy({
-      by: ["userId"],
-      where: { createdAt: { gte: from, lte: to } },
-      _sum: { points: true },
-    }),
-    db.case.groupBy({
-      by: ["authorId"],
-      where: { submittedAt: { gte: from, lte: to } },
-      _count: true,
-    }),
-    db.pointsLedger.groupBy({
-      by: ["userId"],
-      _sum: { points: true },
-    }),
-  ]);
+  // 口径统一见 lib/points-queries（期间案例数/期间积分/累计积分一处聚合）
+  const rows = await pointsReport(from, to);
 
-  const users = await db.user.findMany({ select: { id: true, name: true, username: true } });
-  const nameOf = new Map(users.map((u) => [u.id, u]));
-
-  const ledgerByUser = new Map(ledgerRows.map((r) => [r.userId, r._sum.points ?? 0]));
-  const caseByUser = new Map(caseRows.map((r) => [r.authorId, r._count]));
-  const totalByUser = new Map(totals.map((r) => [r.userId, r._sum.points ?? 0]));
-
-  // 名单 = 期间有积分或有提交的人
-  const involved = new Set([...ledgerByUser.keys(), ...caseByUser.keys()]);
-  const rows = [...involved]
-    .map((id) => ({
-      user: nameOf.get(id),
-      cases: caseByUser.get(id) ?? 0,
-      points: ledgerByUser.get(id) ?? 0,
-      total: totalByUser.get(id) ?? 0,
-    }))
-    .filter((r) => r.user)
-    .sort((a, b) => b.points - a.points);
-
-  const sumCases = rows.reduce((s, r) => s + r.cases, 0);
-  const sumPoints = rows.reduce((s, r) => s + r.points, 0);
+  const sumCases = rows.reduce((s, r) => s + r.casesInPeriod, 0);
+  const sumPoints = rows.reduce((s, r) => s + r.pointsInPeriod, 0);
 
   return (
     <div>
@@ -98,12 +64,12 @@ export default async function AdminReportPage({ searchParams }: { searchParams: 
               </tr>
             ) : (
               rows.map((r) => (
-                <tr key={r.user!.id} className="text-charcoal">
-                  <td className="px-4 py-3 font-medium">{r.user!.name}</td>
-                  <td className="px-4 py-3 text-slate">{r.user!.username}</td>
-                  <td className="px-4 py-3 text-right">{r.cases}</td>
-                  <td className="px-4 py-3 text-right font-semibold text-primary">{r.points}</td>
-                  <td className="px-4 py-3 text-right">{r.total}</td>
+                <tr key={r.userId} className="text-charcoal">
+                  <td className="px-4 py-3 font-medium">{r.name}</td>
+                  <td className="px-4 py-3 text-slate">{r.username}</td>
+                  <td className="px-4 py-3 text-right">{r.casesInPeriod}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-primary">{r.pointsInPeriod}</td>
+                  <td className="px-4 py-3 text-right">{r.pointsTotal}</td>
                 </tr>
               ))
             )}

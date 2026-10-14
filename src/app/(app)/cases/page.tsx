@@ -1,11 +1,9 @@
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
-import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { listCases, listCategories } from "@/lib/case-queries";
 import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, Empty, Input, Label, Select, PageTitle } from "@/components/ui";
 import { GRADES } from "@/lib/case-state";
-import { visibilityWhere } from "@/lib/case-visibility";
 import { ROLE } from "@/lib/roles";
 
 type SP = Record<string, string | string[] | undefined>;
@@ -24,35 +22,13 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
   const grade = one(sp, "grade");
   const from = one(sp, "from");
   const to = one(sp, "to");
-  const status = one(sp, "status"); // 仅管理员
-  const author = one(sp, "author").trim(); // 仅管理员
+  const status = one(sp, "status");
+  const author = one(sp, "author").trim();
 
-  const conditions: Prisma.CaseWhereInput[] = [];
-
-  // 可见性策略见 lib/case-visibility：普通用户 = 已入库 ∪ 本人案例；管理员可按状态筛（默认全部）
-  conditions.push(visibilityWhere(user));
-  if (isAdmin && status) conditions.push({ status });
-  if (q) conditions.push({ title: { contains: q } });
-  if (categoryId) conditions.push({ categoryId });
-  if ((GRADES as readonly string[]).includes(grade)) conditions.push({ grade });
-  if (from) conditions.push({ submittedAt: { gte: new Date(from) } });
-  if (to) conditions.push({ submittedAt: { lte: new Date(`${to}T23:59:59`) } });
-  if (isAdmin && author) {
-    const authors = await db.user.findMany({
-      where: { OR: [{ name: { contains: author } }, { username: { contains: author } }] },
-      select: { id: true },
-    });
-    conditions.push({ authorId: { in: authors.map((a) => a.id) } });
-  }
-
+  // 查询知识（include/orderBy/可见性/筛选）见 lib/case-queries
   const [cases, categories] = await Promise.all([
-    db.case.findMany({
-      where: { AND: conditions },
-      orderBy: { submittedAt: "desc" },
-      take: 100,
-      include: { author: true, category: true },
-    }),
-    db.category.findMany({ orderBy: { name: "asc" } }),
+    listCases(user, { q, categoryId, grade, from, to, status, author }),
+    listCategories(),
   ]);
 
   return (

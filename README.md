@@ -25,7 +25,7 @@ npm run start
 ## 测试
 
 ```bash
-npm run test             # vitest：状态机决策矩阵、积分词汇/发放、可见性策略、查询口径等 64 例
+npm run test             # vitest：状态机决策矩阵、积分词汇/发放、可见性策略、查询口径等
                          #（纯函数表驱动 + prisma/test.db 集成，测试文件串行运行）
 npx tsx scripts/smoke.ts # 冒烟：需先 npm run build && npm run start
 npx tsx scripts/clean-smoke-data.ts  # 清理冒烟测试数据

@@ -1,10 +1,9 @@
 import "server-only";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { ALLOWED_EXTENSIONS, MAX_FILE_SIZE } from "./validation";
-
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+import { UPLOAD_DIR } from "./upload-path";
 
 export interface SavedUpload {
   fileName: string;
@@ -46,8 +45,9 @@ const MAGIC_CHECKS: Record<string, (buf: Buffer) => boolean> = {
   // .txt / .md 为纯文本，不做魔数校验
 };
 
-/** 校验并保存上传附件到 uploads/，返回入库字段；校验失败抛出带原因的 Error */
-export async function saveUpload(file: File): Promise<SavedUpload> {
+/** 校验并保存上传附件，返回入库字段；校验失败抛出带原因的 Error。
+ *  dir 仅测试注入，生产走默认 uploads/。 */
+export async function saveUpload(file: File, dir: string = UPLOAD_DIR): Promise<SavedUpload> {
   const ext = getExtension(file.name);
   if (!ext) throw new Error(`不支持的文件格式，仅允许：${ALLOWED_EXTENSIONS.join(" ")}`);
   if (file.size > MAX_FILE_SIZE) throw new Error("文件超过 20MB 限制");
@@ -58,8 +58,19 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
   if (check && !check(buf)) throw new Error("文件内容与扩展名不符，已拒绝保存");
 
   const stored = `${crypto.randomUUID()}${ext}`;
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  await writeFile(path.join(UPLOAD_DIR, stored), buf);
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, stored), buf);
 
   return { fileName: file.name, filePath: stored, fileType: ext, fileSize: buf.length };
+}
+
+/** 读取已保存附件。文件缺失（ENOENT）返回 null——「记录在、文件没了」是业务上有意义的结局；
+ *  其他读取错误（权限/磁盘故障）抛出，由调用方决定表现（错误形态有意区分，同 case-visibility 的 404/403 风格）。 */
+export async function readUpload(filePath: string, dir: string = UPLOAD_DIR): Promise<Buffer | null> {
+  try {
+    return await readFile(path.join(dir, filePath));
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw e;
+  }
 }

@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
 import { COOKIE_NAME, signSessionToken, type SessionPayload } from "../src/lib/session-token";
+import { uploadPath } from "../src/lib/upload-path";
 
 const BASE = "http://localhost:3000";
 const db = new PrismaClient();
@@ -66,7 +67,7 @@ async function main() {
   const admin = await db.user.findUniqueOrThrow({ where: { username: "admin" } });
 
   const attPath = "smoke-attachment.txt";
-  fs.writeFileSync(path.join(process.cwd(), "uploads", attPath), "smoke-test-attachment-content");
+  fs.writeFileSync(uploadPath(attPath), "smoke-test-attachment-content");
 
   const caseBase = { categoryId: cat.id, fileName: "冒烟附件.txt", filePath: attPath, fileType: ".txt", fileSize: 30 };
   const caseA = await db.case.create({ data: { ...caseBase, title: "冒烟-待初审案例", authorId: u2.id, status: "PENDING_FIRST" } });

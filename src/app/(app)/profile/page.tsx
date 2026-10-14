@@ -2,12 +2,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { Card, Empty, PageTitle } from "@/components/ui";
-
-const EVENT_LABELS: Record<string, string> = {
-  SUBMIT: "提交案例",
-  FIRST_PASS: "初审通过",
-  FINAL_GRADE: "终审定级",
-};
+import { POINT_EVENT_LABELS, type PointEvent } from "@/lib/points-vocab";
 
 export default async function ProfilePage() {
   const user = await requireUser();
@@ -50,7 +45,7 @@ export default async function ProfilePage() {
               <div key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm text-charcoal">
-                    {EVENT_LABELS[r.eventType] ?? r.eventType} · {r.case.title}
+                    {POINT_EVENT_LABELS[r.eventType as PointEvent] ?? r.eventType} · {r.case.title}
                   </p>
                   <p className="mt-0.5 text-xs text-steel">{r.createdAt.toLocaleString("zh-CN")}</p>
                 </div>

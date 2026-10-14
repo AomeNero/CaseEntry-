@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
 import { pointsConfigEntrySchema } from "@/lib/validation";
+import { POINT_CONFIG_KEYS, POINT_CONFIG_LABELS, type PointConfigKey } from "@/lib/points-vocab";
 import type { FormState } from "./auth";
 
 /** 禁用/启用账号（不能操作自己） */
@@ -73,36 +74,36 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   revalidatePath("/admin/categories");
 }
 
-const POINT_KEYS = ["SUBMIT", "FIRST_PASS", "GRADE_A", "GRADE_B", "GRADE_C"] as const;
-const POINT_LABELS: Record<(typeof POINT_KEYS)[number], string> = {
-  SUBMIT: "提交案例",
-  FIRST_PASS: "初审通过",
-  GRADE_A: "A级案例",
-  GRADE_B: "B级案例",
-  GRADE_C: "C级案例",
-};
-
 export async function updatePointsConfigAction(
   _prev: FormState,
   formData: FormData
 ): Promise<FormState> {
   await requireAdmin();
 
-  const updates = [];
-  for (const key of POINT_KEYS) {
+  const updates: Array<{ key: PointConfigKey; value: number }> = [];
+  for (const key of POINT_CONFIG_KEYS) {
     const parsed = pointsConfigEntrySchema.safeParse({
       key,
       value: Number(formData.get(key)),
     });
     if (!parsed.success) {
-      return { error: `${POINT_LABELS[key]}：${parsed.error.issues[0].message}` };
+      return { error: `${POINT_CONFIG_LABELS[key]}：${parsed.error.issues[0].message}` };
     }
     updates.push(parsed.data);
   }
 
-  for (const u of updates) {
-    await db.pointsConfig.update({ where: { key: u.key }, data: { value: u.value } });
-  }
+  // 单事务 upsert：要么全部生效，要么全部不动；缺行（未跑 seed）也能补齐
+  await db.$transaction((tx) =>
+    Promise.all(
+      updates.map((u) =>
+        tx.pointsConfig.upsert({
+          where: { key: u.key },
+          update: { value: u.value },
+          create: u,
+        })
+      )
+    )
+  );
   revalidatePath("/admin/points");
   return { success: "积分配置已更新" };
 }

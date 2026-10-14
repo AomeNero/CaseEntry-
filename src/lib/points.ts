@@ -1,6 +1,13 @@
 import "server-only";
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { configKeyFor, type Grade, type PointEvent } from "./case-state";
+import { db } from "./db";
+import type { Grade } from "./case-state";
+import {
+  configKeyFor,
+  POINT_CONFIG_KEYS,
+  type PointConfigKey,
+  type PointEvent,
+} from "./points-vocab";
 
 type Tx = PrismaClient | Prisma.TransactionClient;
 
@@ -47,4 +54,20 @@ function isUniqueViolation(e: unknown): boolean {
     "code" in e &&
     (e as { code: string }).code === "P2002"
   );
+}
+
+/**
+ * 读取全部积分配置为 键→值 映射，供页面文案展示。
+ * 缺键（如未跑 seed）补 0——展示宽容，发放仍由 awardPoints 严格校验。
+ */
+export async function getPointConfigValues(): Promise<Record<PointConfigKey, number>> {
+  const map = Object.fromEntries(POINT_CONFIG_KEYS.map((k) => [k, 0])) as Record<
+    PointConfigKey,
+    number
+  >;
+  const rows = await db.pointsConfig.findMany();
+  for (const r of rows) {
+    if (r.key in map) map[r.key as PointConfigKey] = r.value;
+  }
+  return map;
 }

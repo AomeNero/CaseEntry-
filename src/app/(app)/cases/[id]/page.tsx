@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { getPointConfigValues } from "@/lib/points";
 import { resubmitCaseAction } from "@/app/actions/case";
 import { ReviewForm } from "@/components/review-form";
 import { CaseForm } from "@/components/case-form";
@@ -26,6 +27,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
   if (!canView(user, kase)) notFound();
 
   const categories = isAuthor && kase.status === "REJECTED" ? await db.category.findMany({ orderBy: { name: "asc" } }) : [];
+  const points = await getPointConfigValues();
   const reviewStage: ReviewStage | null =
     kase.status === "PENDING_FIRST" ? "FIRST" : kase.status === "PENDING_FINAL" ? "FINAL" : null;
 
@@ -80,7 +82,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
           <h2 className="mb-1 text-base font-semibold text-ink">
             {reviewStage === "FIRST" ? "初审" : "终审"}
           </h2>
-          <ReviewForm caseId={kase.id} stage={reviewStage} />
+          <ReviewForm caseId={kase.id} stage={reviewStage} firstPassPoints={points.FIRST_PASS} />
         </Card>
       )}
 

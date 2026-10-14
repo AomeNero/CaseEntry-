@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   canTransition,
-  configKeyFor,
   decideResubmit,
   decideReview,
   statusOnApprove,
@@ -36,22 +35,6 @@ describe("案例状态机", () => {
     expect(canTransition("PUBLISHED", "REJECTED")).toBe(false); // 入库后终态
     expect(canTransition("PUBLISHED", "PENDING_FIRST")).toBe(false);
     expect(canTransition("REJECTED", "PUBLISHED")).toBe(false); // 驳回不能直接入库
-  });
-});
-
-describe("积分事件映射", () => {
-  it("提交与初审事件直接作为配置键", () => {
-    expect(configKeyFor("SUBMIT")).toBe("SUBMIT");
-    expect(configKeyFor("FIRST_PASS")).toBe("FIRST_PASS");
-  });
-
-  it("终审定级按等级取配置键", () => {
-    expect(configKeyFor("FINAL_GRADE", "A")).toBe("GRADE_A");
-    expect(configKeyFor("FINAL_GRADE", "C")).toBe("GRADE_C");
-  });
-
-  it("终审事件缺等级时抛错", () => {
-    expect(() => configKeyFor("FINAL_GRADE")).toThrow();
   });
 });
 

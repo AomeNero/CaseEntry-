@@ -5,8 +5,16 @@ import { reviewAction } from "@/app/actions/review";
 import type { ReviewStage } from "@/lib/case-state";
 import { Button, FormError, Label, Textarea } from "@/components/ui";
 
-/** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回 */
-export function ReviewForm({ caseId, stage }: { caseId: string; stage: ReviewStage }) {
+/** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回。初审积分提示由调用方从配置读取传入。 */
+export function ReviewForm({
+  caseId,
+  stage,
+  firstPassPoints,
+}: {
+  caseId: string;
+  stage: ReviewStage;
+  firstPassPoints: number;
+}) {
   const [state, formAction, pending] = useActionState(reviewAction, {});
 
   return (
@@ -20,7 +28,7 @@ export function ReviewForm({ caseId, stage }: { caseId: string; stage: ReviewSta
           <Button type="submit" name="action" value="approve" disabled={pending} className="px-4 py-2">
             通过初审
           </Button>
-          <span className="text-xs text-steel">通过后进入终审队列，录入人 +10 分</span>
+          <span className="text-xs text-steel">通过后进入终审队列，录入人 +{firstPassPoints} 分</span>
         </div>
       ) : (
         <div>

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { POINT_DEFAULTS } from "../src/lib/points-vocab";
 
 const prisma = new PrismaClient();
 
@@ -17,14 +18,7 @@ async function main() {
     await prisma.category.upsert({ where: { name }, update: {}, create: { name } });
   }
 
-  const points = [
-    { key: "SUBMIT", value: 5 },
-    { key: "FIRST_PASS", value: 10 },
-    { key: "GRADE_A", value: 100 },
-    { key: "GRADE_B", value: 50 },
-    { key: "GRADE_C", value: 20 },
-  ];
-  for (const p of points) {
+  for (const p of POINT_DEFAULTS) {
     await prisma.pointsConfig.upsert({
       where: { key: p.key },
       update: { value: p.value },

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { getPointConfigValues } from "@/lib/points";
 import { ReviewForm } from "@/components/review-form";
 import { Card, Empty, PageTitle } from "@/components/ui";
 import type { ReviewStage } from "@/lib/case-state";
@@ -17,11 +18,13 @@ function QueueSection({
   items,
   stage,
   emptyText,
+  firstPassPoints,
 }: {
   title: string;
   items: QueueItem[];
   stage: ReviewStage;
   emptyText: string;
+  firstPassPoints: number;
 }) {
   return (
     <section className="mb-8">
@@ -45,7 +48,7 @@ function QueueSection({
                   {c.authorName} · {c.date.toLocaleString("zh-CN")}
                 </span>
               </div>
-              <ReviewForm caseId={c.id} stage={stage} />
+              <ReviewForm caseId={c.id} stage={stage} firstPassPoints={firstPassPoints} />
             </Card>
           ))}
         </div>
@@ -57,7 +60,7 @@ function QueueSection({
 export default async function AdminQueuePage() {
   await requireAdmin();
 
-  const [firstQueue, finalQueue] = await Promise.all([
+  const [firstQueue, finalQueue, points] = await Promise.all([
     db.case.findMany({
       where: { status: "PENDING_FIRST" },
       orderBy: { submittedAt: "asc" },
@@ -70,6 +73,7 @@ export default async function AdminQueuePage() {
       take: 20,
       include: { author: true },
     }),
+    getPointConfigValues(),
   ]);
 
   return (
@@ -79,6 +83,7 @@ export default async function AdminQueuePage() {
         title="待初审"
         stage="FIRST"
         emptyText="没有待初审的案例"
+        firstPassPoints={points.FIRST_PASS}
         items={firstQueue.map((c) => ({
           id: c.id,
           title: c.title,
@@ -90,6 +95,7 @@ export default async function AdminQueuePage() {
         title="待终审（定级）"
         stage="FINAL"
         emptyText="没有待终审的案例"
+        firstPassPoints={points.FIRST_PASS}
         items={finalQueue.map((c) => ({
           id: c.id,
           title: c.title,

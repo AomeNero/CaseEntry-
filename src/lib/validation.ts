@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { POINT_CONFIG_KEYS } from "./points-vocab";
 
 /** 上传白名单与限制（与 lib/upload.ts 共用） */
 export const ALLOWED_EXTENSIONS = [
@@ -55,7 +56,7 @@ export const changePasswordSchema = z.object({
 });
 
 export const pointsConfigEntrySchema = z.object({
-  key: z.enum(["SUBMIT", "FIRST_PASS", "GRADE_A", "GRADE_B", "GRADE_C"]),
+  key: z.enum(POINT_CONFIG_KEYS),
   value: z.number().int("必须为整数").min(0, "不能为负数").max(100000),
 });
 

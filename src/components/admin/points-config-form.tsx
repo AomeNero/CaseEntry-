@@ -3,14 +3,7 @@
 import { useActionState } from "react";
 import { updatePointsConfigAction } from "@/app/actions/admin";
 import { Button, FormError, Input, Label } from "@/components/ui";
-
-const FIELDS = [
-  { key: "SUBMIT", label: "提交案例（+分）" },
-  { key: "FIRST_PASS", label: "初审通过（+分）" },
-  { key: "GRADE_A", label: "终审 A 级（+分）" },
-  { key: "GRADE_B", label: "终审 B 级（+分）" },
-  { key: "GRADE_C", label: "终审 C 级（+分）" },
-] as const;
+import { POINT_CONFIG_KEYS, POINT_CONFIG_LABELS } from "@/lib/points-vocab";
 
 export function PointsConfigForm({ values }: { values: Record<string, number> }) {
   const [state, formAction, pending] = useActionState(updatePointsConfigAction, {});
@@ -23,16 +16,16 @@ export function PointsConfigForm({ values }: { values: Record<string, number> })
           {state.success}
         </p>
       )}
-      {FIELDS.map((f) => (
-        <div key={f.key}>
-          <Label htmlFor={f.key}>{f.label}</Label>
+      {POINT_CONFIG_KEYS.map((key) => (
+        <div key={key}>
+          <Label htmlFor={key}>{POINT_CONFIG_LABELS[key]}（+分）</Label>
           <Input
-            id={f.key}
-            name={f.key}
+            id={key}
+            name={key}
             type="number"
             min={0}
             step={1}
-            defaultValue={values[f.key] ?? 0}
+            defaultValue={values[key] ?? 0}
             required
           />
         </div>

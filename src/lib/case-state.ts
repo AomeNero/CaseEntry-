@@ -1,5 +1,5 @@
 /**
- * 案例状态机与积分事件映射（纯函数，无外部依赖，可直接单测）。
+ * 案例状态机（纯函数，无外部依赖，可直接单测）。积分词汇见 lib/points-vocab。
  *
  * 状态流转：
  *   PENDING_FIRST --初审通过--> PENDING_FINAL --终审定级--> PUBLISHED
@@ -10,6 +10,7 @@
  * 并以 updateMany({ where: { id, status: 当前状态 } }) 应用——写时守卫，并发安全。
  */
 import type { Prisma } from "@prisma/client";
+import type { PointEvent } from "./points-vocab";
 
 export const CASE_STATUSES = [
   "PENDING_FIRST",
@@ -24,9 +25,6 @@ export type ReviewStage = (typeof REVIEW_STAGES)[number];
 
 export const GRADES = ["A", "B", "C"] as const;
 export type Grade = (typeof GRADES)[number];
-
-export const POINT_EVENTS = ["SUBMIT", "FIRST_PASS", "FINAL_GRADE"] as const;
-export type PointEvent = (typeof POINT_EVENTS)[number];
 
 /** 状态中文标签 */
 export const STATUS_LABELS: Record<CaseStatus, string> = {
@@ -58,15 +56,6 @@ const ALLOWED_TRANSITIONS: Record<CaseStatus, CaseStatus[]> = {
 
 export function canTransition(from: CaseStatus, to: CaseStatus): boolean {
   return ALLOWED_TRANSITIONS[from].includes(to);
-}
-
-/** 积分事件 → PointsConfig 键（终审定级按等级取键） */
-export function configKeyFor(event: PointEvent, grade?: Grade): string {
-  if (event === "FINAL_GRADE") {
-    if (!grade) throw new Error("终审定级积分必须提供等级");
-    return `GRADE_${grade}`;
-  }
-  return event;
 }
 
 // ---------------------------------------------------------------------------

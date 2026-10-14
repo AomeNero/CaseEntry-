@@ -1,20 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { PrismaClient } from "@prisma/client";
 import { awardPoints } from "../points";
+import { POINT_DEFAULTS } from "../points-vocab";
 
 /**
  * 集成测试：跑在 vitest.global-setup 准备好的 prisma/test.db 上。
  * 验证关键行为：发放金额来自配置表、(caseId, eventType) 防重。
  */
 const db = new PrismaClient();
-
-const POINT_DEFAULTS = [
-  { key: "SUBMIT", value: 5 },
-  { key: "FIRST_PASS", value: 10 },
-  { key: "GRADE_A", value: 100 },
-  { key: "GRADE_B", value: 50 },
-  { key: "GRADE_C", value: 20 },
-];
 
 async function seedConfigs(values = POINT_DEFAULTS) {
   for (const p of values) {

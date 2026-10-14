@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { awardPoints } from "@/lib/points";
 import { reviewActionSchema } from "@/lib/validation";
+import { parseForm } from "@/lib/form";
 import { decideReview, type CaseStatus, type ReviewActionInput } from "@/lib/case-state";
 import { getCurrentAdmin } from "@/lib/auth";
 import type { FormState } from "@/lib/form";
@@ -21,13 +22,17 @@ export async function reviewAction(_prev: FormState, formData: FormData): Promis
   const caseId = String(formData.get("caseId") ?? "");
   if (!caseId) return { error: "参数错误" };
 
-  const parsed = reviewActionSchema.safeParse({
+  // 完成后的跳转目标属于调用方（审核待办→/admin；案例详情→回详情页）；只接受站内路径
+  const redirectToRaw = String(formData.get("redirectTo") ?? "");
+  const redirectTo = redirectToRaw.startsWith("/") ? redirectToRaw : "/admin";
+
+  const parsed = parseForm(reviewActionSchema, {
     stage: formData.get("stage"),
     action: formData.get("action"),
     reason: formData.get("reason") || undefined,
     grade: formData.get("grade") || undefined,
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.ok) return { error: parsed.error };
   const d = parsed.data;
 
   const actionInput: ReviewActionInput =
@@ -61,5 +66,5 @@ export async function reviewAction(_prev: FormState, formData: FormData): Promis
   });
   if (!applied) return { error: "案例状态已变化，请刷新后重试" };
 
-  redirect("/admin");
+  redirect(redirectTo);
 }

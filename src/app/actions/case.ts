@@ -7,17 +7,17 @@ import { saveUpload } from "@/lib/upload";
 import { awardPoints } from "@/lib/points";
 import { caseFormSchema } from "@/lib/validation";
 import { decideResubmit, type CaseStatus, type ReviewStage } from "@/lib/case-state";
-import type { FormState } from "@/lib/form";
+import { parseForm, type FormState } from "@/lib/form";
 
 /** 提交新案例：表单校验 → 附件保存 → 建案例 + 发提交积分（同事务） */
 export async function createCaseAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser();
 
-  const parsed = caseFormSchema.safeParse({
+  const parsed = parseForm(caseFormSchema, {
     title: formData.get("title"),
     categoryId: formData.get("categoryId"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.ok) return { error: parsed.error };
 
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) return { error: "请上传附件" };
@@ -57,11 +57,11 @@ export async function resubmitCaseAction(_prev: FormState, formData: FormData): 
   const user = await requireUser();
   const caseId = String(formData.get("caseId") ?? "");
 
-  const parsed = caseFormSchema.safeParse({
+  const parsed = parseForm(caseFormSchema, {
     title: formData.get("title"),
     categoryId: formData.get("categoryId"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.ok) return { error: parsed.error };
 
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) return { error: "请重新上传附件" };

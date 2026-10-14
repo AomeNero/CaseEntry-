@@ -80,7 +80,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
           <h2 className="mb-1 text-base font-semibold text-ink">
             {reviewStage === "FIRST" ? "初审" : "终审"}
           </h2>
-          <ReviewForm caseId={kase.id} stage={reviewStage} firstPassPoints={points.FIRST_PASS} />
+          <ReviewForm caseId={kase.id} stage={reviewStage} firstPassPoints={points.FIRST_PASS} redirectTo={`/cases/${kase.id}`} />
         </Card>
       )}
 

@@ -6,17 +6,18 @@ import { createSession, destroySession } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { loginSchema, registerSchema } from "@/lib/validation";
 import { ROLE, isRole } from "@/lib/roles";
-import type { FormState } from "@/lib/form";
+import { parseForm, type FormState } from "@/lib/form";
 
 export async function loginAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const parsed = loginSchema.safeParse({
+  const parsed = parseForm(loginSchema, {
     username: formData.get("username"),
     password: formData.get("password"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.ok) return { error: parsed.error };
+  const { username, password } = parsed.data;
 
-  const user = await db.user.findUnique({ where: { username: parsed.data.username } });
-  if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
+  const user = await db.user.findUnique({ where: { username } });
+  if (!user || !(await verifyPassword(password, user.passwordHash))) {
     return { error: "用户名或密码错误" };
   }
   if (user.disabled) return { error: "账号已被禁用，请联系管理员" };
@@ -32,21 +33,22 @@ export async function loginAction(_prev: FormState, formData: FormData): Promise
 }
 
 export async function registerAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const parsed = registerSchema.safeParse({
+  const parsed = parseForm(registerSchema, {
     username: formData.get("username"),
     password: formData.get("password"),
     name: formData.get("name"),
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.ok) return { error: parsed.error };
+  const { username, password, name } = parsed.data;
 
-  const exists = await db.user.findUnique({ where: { username: parsed.data.username } });
+  const exists = await db.user.findUnique({ where: { username } });
   if (exists) return { error: "该用户名已被注册" };
 
   const user = await db.user.create({
     data: {
-      username: parsed.data.username,
-      passwordHash: await hashPassword(parsed.data.password),
-      name: parsed.data.name,
+      username,
+      passwordHash: await hashPassword(password),
+      name,
     },
   });
   await createSession({ sub: user.id, username: user.username, name: user.name, role: ROLE.USER });

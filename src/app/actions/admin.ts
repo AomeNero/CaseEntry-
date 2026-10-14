@@ -7,14 +7,20 @@ import { hashPassword } from "@/lib/password";
 import { pointsConfigEntrySchema } from "@/lib/validation";
 import { POINT_CONFIG_KEYS, POINT_CONFIG_LABELS, type PointConfigKey } from "@/lib/points-vocab";
 import { isRole } from "@/lib/roles";
-import type { FormState } from "@/lib/form";
+import { parseForm, type FormState } from "@/lib/form";
+
+/** 自操作守卫：目标用户非空且非当前管理员自己，返回目标 id；否则 null */
+function targetUserId(adminId: string, formData: FormData): string | null {
+  const userId = String(formData.get("userId") ?? "");
+  return userId && userId !== adminId ? userId : null;
+}
 
 /** 禁用/启用账号（不能操作自己） */
 export async function setUserDisabledAction(formData: FormData): Promise<void> {
   const admin = await requireAdmin();
-  const userId = String(formData.get("userId") ?? "");
+  const userId = targetUserId(admin.id, formData);
+  if (!userId) return;
   const disabled = formData.get("disabled") === "true";
-  if (!userId || userId === admin.id) return;
 
   await db.user.update({ where: { id: userId }, data: { disabled } });
   revalidatePath("/admin/users");
@@ -23,9 +29,9 @@ export async function setUserDisabledAction(formData: FormData): Promise<void> {
 /** 提权/降权（不能操作自己） */
 export async function setUserRoleAction(formData: FormData): Promise<void> {
   const admin = await requireAdmin();
-  const userId = String(formData.get("userId") ?? "");
+  const userId = targetUserId(admin.id, formData);
   const role = String(formData.get("role") ?? "");
-  if (!userId || userId === admin.id) return;
+  if (!userId) return;
   if (!isRole(role)) return;
 
   await db.user.update({ where: { id: userId }, data: { role } });
@@ -83,12 +89,12 @@ export async function updatePointsConfigAction(
 
   const updates: Array<{ key: PointConfigKey; value: number }> = [];
   for (const key of POINT_CONFIG_KEYS) {
-    const parsed = pointsConfigEntrySchema.safeParse({
+    const parsed = parseForm(pointsConfigEntrySchema, {
       key,
       value: Number(formData.get(key)),
     });
-    if (!parsed.success) {
-      return { error: `${POINT_CONFIG_LABELS[key]}：${parsed.error.issues[0].message}` };
+    if (!parsed.ok) {
+      return { error: `${POINT_CONFIG_LABELS[key]}：${parsed.error}` };
     }
     updates.push(parsed.data);
   }

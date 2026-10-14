@@ -5,15 +5,18 @@ import { reviewAction } from "@/app/actions/review";
 import type { ReviewStage } from "@/lib/case-state";
 import { Button, FormError, Label, Textarea } from "@/components/ui";
 
-/** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回。初审积分提示由调用方从配置读取传入。 */
+/** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回。
+ *  初审积分提示由调用方从配置读取传入；redirectTo 决定审核完成后的落点。 */
 export function ReviewForm({
   caseId,
   stage,
   firstPassPoints,
+  redirectTo,
 }: {
   caseId: string;
   stage: ReviewStage;
   firstPassPoints: number;
+  redirectTo?: string;
 }) {
   const [state, formAction, pending] = useActionState(reviewAction, {});
 
@@ -22,6 +25,7 @@ export function ReviewForm({
       <FormError message={state.error} />
       <input type="hidden" name="caseId" value={caseId} />
       <input type="hidden" name="stage" value={stage} />
+      {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {stage === "FIRST" ? (
         <div className="flex flex-wrap items-center gap-2">

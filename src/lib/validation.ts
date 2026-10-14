@@ -34,10 +34,19 @@ export const caseFormSchema = z.object({
   categoryId: z.string().min(1, "请选择产品分类"),
 });
 
+/** 审核动作按环节耦合：初审=通过/驳回；终审=定级/驳回。终审不存在"直接通过"。 */
 export const reviewActionSchema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("approve") }),
-  z.object({ action: z.literal("reject"), reason: z.string().trim().min(1, "驳回必须填写理由").max(500) }),
-  z.object({ action: z.literal("grade"), grade: z.enum(["A", "B", "C"]) }),
+  z.object({ stage: z.literal("FIRST"), action: z.literal("approve") }),
+  z.object({
+    stage: z.literal("FINAL"),
+    action: z.literal("grade"),
+    grade: z.enum(["A", "B", "C"]),
+  }),
+  z.object({
+    stage: z.enum(["FIRST", "FINAL"]),
+    action: z.literal("reject"),
+    reason: z.string().trim().min(1, "驳回必须填写理由").max(500),
+  }),
 ]);
 
 export const changePasswordSchema = z.object({

@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 /*
- * DESIGN.md token 映射（Seline 设计语言，ADR-0005 单色纪律）
+ * DESIGN.md token 映射（Seline 设计语言，ADR-0006 单色纪律）
  * 颜色/字体/字阶/圆角/阴影 token 一比一落成 Tailwind v4 @theme 变量。
+ * 单色纪律见 docs/adr/0006。
  * 注意：不落 DESIGN.md 的 --spacing-* 固定像素刻度——会覆盖 Tailwind
  * 默认动态 spacing（p-4 等），破坏全部存量工具类；间距沿用 Tailwind 默认。
  */

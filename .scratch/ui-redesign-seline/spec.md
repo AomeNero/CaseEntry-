@@ -39,7 +39,7 @@ CaseEntry 当前的界面是一套紫色主色 + navy 深色系 + 粉彩状态�
 
 - **纯视觉层重设计**：路由、页面结构、查询逻辑、server action 零变动；不引入任何新依赖（无 clsx/radix/cva），组件变体保持字符串映射风格。
 - **Token 换血采用 expand–contract**：先在全局主题层新增 Seline 全套 token（旧 token 并存不破坏），各页面批次迁移到新 token，最后删除旧 token 与失去用途的旧变体。token 命名与取值照抄 `DESIGN.md` 的 Tailwind v4 `@theme` 清单。
-- **单色纪律（立 ADR-0005）**：全站唯一色相为青色三调（cyan-signal / cyan-edge / sky-wash）+ 石色灰阶 + 墨黑/煤黑；驳回不用红、表单错误不用红、破坏性按钮不用红。状态徽章四态与等级 A/B/C 用填充/描边/深浅组合区分。
+- **单色纪律（立 ADR-0006）**：全站唯一色相为青色三调（cyan-signal / cyan-edge / sky-wash）+ 石色灰阶 + 墨黑/煤黑；驳回不用红、表单错误不用红、破坏性按钮不用红。状态徽章四态与等级 A/B/C 用填充/描边/深浅组合区分。
 - **字体**：Inter Tight（展示/标题，weight 400、负字距）+ Inter（正文 14px、行高 1.64），沿用现有 Google 字体加载机制；Roobert 为商业字体不可用。
 - **标题体系**：页面标题 32px heading-sm、区块/卡片小标题 20px subheading；青色高亮短语（青字 + 天青药丸底）仅允许出现在首页 hero 与 404 页，每处至多一个。
 - **按钮体系**：药丸形；青色实心 = 页面唯一 chromatic 元素且至多一个视口主行动；墨黑描边 = 驳回等次级动作；墨黑实心 + 原生 confirm 二次确认 = 删除分类/禁用账号等不可逆操作。

@@ -4,7 +4,7 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAt
  * 基础 UI 组件，样式遵循 DESIGN.md（Seline）：
  * 按钮一律药丸形（rounded-full），青色实心是页面唯一 chromatic 元素；
  * 卡片纯白 + 10px 圆角 + 1px 石色细边框（无阴影，阴影留给预览卡）；
- * 单色纪律见 docs/adr/0005。
+ * 单色纪律见 docs/adr/0006。
  */
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "dark" | "ghost" | "destructive";
@@ -14,13 +14,13 @@ const BUTTON_STYLES: Record<ButtonVariant, string> = {
   primary: "border border-cyan-edge bg-cyan-signal text-white hover:bg-cyan-edge",
   // 幽灵描边：次级动作
   secondary: "border border-stone-border text-ink-black hover:border-stone-muted",
-  // 墨黑描边：审核「驳回」等与主行动并置的强次级动作（ADR-0005）
+  // 墨黑描边：审核「驳回」等与主行动并置的强次级动作（ADR-0006）
   outline: "border border-ink-black text-ink-black hover:bg-soot hover:text-white",
   // 煤黑实心：深色强调（如附件下载）
   dark: "bg-soot text-white hover:bg-ink-black",
   // 无边框文字按钮
   ghost: "text-warm-gray hover:text-ink-black",
-  // 墨黑实心：破坏性操作（不用红，配 ConfirmButton 二次确认）
+  // 墨黑实心：破坏性操作（不用红，配 ConfirmButton 二次确认，ADR-0006）
   destructive: "bg-ink-black text-white hover:bg-soot",
 };
 
@@ -74,7 +74,7 @@ export function Label({ children, htmlFor }: { children: ReactNode; htmlFor?: st
   );
 }
 
-/** 表单顶部错误提示条（单色纪律：不用红，墨黑加粗承担警示，见 ADR-0005） */
+/** 表单顶部错误提示条（单色纪律：不用红，墨黑加粗承担警示，见 ADR-0006） */
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (

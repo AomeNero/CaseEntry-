@@ -1,7 +1,7 @@
 import { GRADE_LABELS, STATUS_LABELS, type CaseStatus, type Grade } from "@/lib/case-state";
 
 /**
- * 状态徽章：单色纪律（ADR-0005）——不新增色相，过程态用青调（描边/天青底）、
+ * 状态徽章：单色纪律（ADR-0006）——不新增色相，过程态用青调（描边/天青底）、
  * 入库用墨黑实心、驳回用灰阶描边；靠填充/描边/深浅组合区分。
  */
 const STATUS_STYLES: Record<CaseStatus, string> = {

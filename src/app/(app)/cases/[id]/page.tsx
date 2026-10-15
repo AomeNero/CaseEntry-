@@ -39,7 +39,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="max-w-3xl">
       <div className="mb-4">
-        <Link href="/cases" className="text-sm text-link">
+        <Link href="/cases" className="text-sm text-cyan-edge transition-colors hover:text-cyan-signal">
           ← 返回案例库
         </Link>
       </div>
@@ -54,8 +54,8 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
         <dl className="grid grid-cols-[88px_1fr] gap-y-3 text-sm md:grid-cols-[120px_1fr]">
           {meta.map(([k, v]) => (
             <div key={k} className="contents">
-              <dt className="text-steel">{k}</dt>
-              <dd className="text-charcoal">{v}</dd>
+              <dt className="text-warm-gray">{k}</dt>
+              <dd className="text-ink-black">{v}</dd>
             </div>
           ))}
         </dl>
@@ -67,17 +67,17 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
       </Card>
 
       {kase.status === "REJECTED" && kase.rejectReason && (
-        <Card className="mb-6 border-error/30 bg-tint-rose">
-          <h2 className="mb-1 text-sm font-semibold text-error">
+        <Card className="mb-6 border-stone-muted bg-stone-canvas">
+          <h2 className="mb-1 text-sm font-medium text-ink-black">
             驳回理由（{kase.rejectedStage === "FIRST" ? "初审" : "终审"}）
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-charcoal">{kase.rejectReason}</p>
+          <p className="whitespace-pre-wrap text-sm text-warm-gray">{kase.rejectReason}</p>
         </Card>
       )}
 
       {isAdmin && reviewStage && (
         <Card className="mb-6">
-          <h2 className="mb-1 text-base font-semibold text-ink">
+          <h2 className="mb-1 font-display text-subheading font-normal text-ink-black">
             {reviewStage === "FIRST" ? "初审" : "终审"}
           </h2>
           <ReviewForm caseId={kase.id} stage={reviewStage} firstPassPoints={points.FIRST_PASS} redirectTo={`/cases/${kase.id}`} />
@@ -86,7 +86,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
 
       {isAuthor && kase.status === "REJECTED" && (
         <Card>
-          <h2 className="mb-4 text-base font-semibold text-ink">修改后重新提交</h2>
+          <h2 className="mb-4 font-display text-subheading font-normal text-ink-black">修改后重新提交</h2>
           <CaseForm
             action={resubmitCaseAction}
             categories={categories}

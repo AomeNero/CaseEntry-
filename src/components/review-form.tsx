@@ -21,7 +21,7 @@ export function ReviewForm({
   const [state, formAction, pending] = useActionState(reviewAction, {});
 
   return (
-    <form action={formAction} className="mt-4 space-y-3 rounded-lg border border-hairline bg-surface-soft p-4">
+    <form action={formAction} className="mt-4 space-y-3 rounded-cards border border-stone-border bg-stone-canvas p-4">
       <FormError message={state.error} />
       <input type="hidden" name="caseId" value={caseId} />
       <input type="hidden" name="stage" value={stage} />
@@ -32,7 +32,7 @@ export function ReviewForm({
           <Button type="submit" name="action" value="approve" disabled={pending} className="px-4 py-2">
             通过初审
           </Button>
-          <span className="text-xs text-steel">通过后进入终审队列，录入人 +{firstPassPoints} 分</span>
+          <span className="text-xs text-warm-gray">通过后进入终审队列，录入人 +{firstPassPoints} 分</span>
         </div>
       ) : (
         <div>
@@ -43,7 +43,7 @@ export function ReviewForm({
             </Button>
             <span className="flex items-center gap-1.5 text-sm">
               {(["A", "B", "C"] as const).map((g, i) => (
-                <label key={g} className="flex cursor-pointer items-center gap-1 rounded-sm border border-hairline bg-canvas px-2.5 py-1.5">
+                <label key={g} className="flex cursor-pointer items-center gap-1 rounded-full border border-stone-border bg-pure-white px-2.5 py-1.5 transition-colors has-[:checked]:border-ink-black">
                   <input type="radio" name="grade" value={g} defaultChecked={i === 0} required />
                   <span className="font-medium">{g} 级</span>
                 </label>

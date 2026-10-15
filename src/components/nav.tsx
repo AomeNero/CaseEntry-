@@ -6,58 +6,106 @@ import { logoutAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui";
 
 const LINKS = [
-  { href: "/", label: "首页", adminOnly: false },
-  { href: "/cases", label: "案例库", adminOnly: false },
-  { href: "/cases/new", label: "录入案例", adminOnly: false },
-  { href: "/my", label: "我的案例", adminOnly: false },
-  { href: "/profile", label: "个人中心", adminOnly: false },
-  { href: "/admin", label: "审核待办", adminOnly: true },
-  { href: "/admin/users", label: "账号管理", adminOnly: true },
-  { href: "/admin/categories", label: "分类管理", adminOnly: true },
-  { href: "/admin/points", label: "积分配置", adminOnly: true },
-  { href: "/admin/report", label: "积分报表", adminOnly: true },
+  { href: "/", label: "首页" },
+  { href: "/cases", label: "案例库" },
+  { href: "/cases/new", label: "录入案例" },
+  { href: "/my", label: "我的案例" },
+  { href: "/profile", label: "个人中心" },
 ];
+
+const ADMIN_LINKS = [
+  { href: "/admin", label: "审核待办" },
+  { href: "/admin/users", label: "账号管理" },
+  { href: "/admin/categories", label: "分类管理" },
+  { href: "/admin/points", label: "积分配置" },
+  { href: "/admin/report", label: "积分报表" },
+];
+
+function SparkMark() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 text-ink-black" fill="currentColor" aria-hidden="true">
+      <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" />
+    </svg>
+  );
+}
+
+const NAV_LINK_CLASS = "flex h-8 items-center px-3 text-sm transition-colors";
 
 export function NavBar({ name, isAdmin }: { name: string; isAdmin: boolean }) {
   const pathname = usePathname();
-  const links = LINKS.filter((l) => !l.adminOnly || isAdmin);
+  const adminActive = pathname.startsWith("/admin");
 
   return (
-    <header className="sticky top-0 z-10 border-b border-hairline bg-canvas">
-      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-5 gap-y-1 px-4 py-3 md:px-8">
+    <header className="sticky top-0 z-10 border-b border-stone-border bg-pure-white">
+      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-x-5 gap-y-1 px-4 py-3 md:px-8">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-white">
-            CE
-          </span>
-          <span className="text-sm font-semibold text-ink">CaseEntry</span>
+          <SparkMark />
+          <span className="text-sm font-medium text-ink-black">CaseEntry</span>
         </Link>
 
-        <nav className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
-          {links.map((l) => {
+        <nav className="flex flex-1 flex-wrap items-center gap-x-1">
+          {LINKS.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`text-sm font-medium transition-colors ${
-                  active ? "text-ink" : "text-slate hover:text-ink"
+                className={`${NAV_LINK_CLASS} ${
+                  active ? "text-ink-black" : "text-warm-gray hover:text-ink-black"
                 }`}
               >
                 {l.label}
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <details className="relative">
+              <summary
+                className={`${NAV_LINK_CLASS} cursor-pointer list-none [&::-webkit-details-marker]:hidden ${
+                  adminActive ? "text-ink-black" : "text-warm-gray hover:text-ink-black"
+                }`}
+              >
+                管理
+                <svg
+                  viewBox="0 0 24 24"
+                  className="ml-1 h-3.5 w-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </summary>
+              <div className="absolute left-0 top-full z-20 mt-1 w-36 rounded-cards border border-stone-border bg-pure-white p-1.5 shadow-md">
+                {ADMIN_LINKS.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`block rounded px-3 py-1.5 text-sm transition-colors ${
+                      pathname === l.href
+                        ? "bg-stone-canvas text-ink-black"
+                        : "text-warm-gray hover:bg-stone-canvas hover:text-ink-black"
+                    }`}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <span className="text-sm text-slate">{name}</span>
+          <span className="text-sm text-warm-gray">{name}</span>
           {isAdmin && (
-            <span className="rounded-sm bg-tint-lavender px-2 py-0.5 text-xs font-semibold text-primary-deep">
+            <span className="rounded-full bg-ink-black px-2 py-0.5 text-xs font-medium text-white">
               管理员
             </span>
           )}
           <form action={logoutAction}>
-            <Button variant="ghost" type="submit" className="px-2 py-1 text-sm text-steel">
+            <Button variant="ghost" type="submit" className="px-2 py-1 text-sm">
               退出
             </Button>
           </form>

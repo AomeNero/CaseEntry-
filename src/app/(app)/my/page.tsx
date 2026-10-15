@@ -19,17 +19,17 @@ export default async function MyCasesPage() {
       {cases.length === 0 ? (
         <Empty text="还没有提交过案例，去「录入案例」提交第一个吧" />
       ) : (
-        <div className="divide-y divide-hairline-soft rounded-lg border border-hairline bg-canvas">
+        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
           {cases.map((c) => (
             <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
               <div className="min-w-0">
                 <Link
                   href={`/cases/${c.id}`}
-                  className="block truncate text-sm font-medium text-ink hover:text-link"
+                  className="block truncate text-sm font-medium text-ink-black transition-colors hover:text-cyan-edge"
                 >
                   {c.title}
                 </Link>
-                <p className="mt-0.5 text-xs text-steel">
+                <p className="mt-0.5 text-xs text-warm-gray">
                   {c.category.name} · 提交于 {c.submittedAt.toLocaleDateString("zh-CN")}
                   {c.status === "REJECTED" && c.rejectReason ? ` · 驳回：${c.rejectReason.slice(0, 30)}` : ""}
                 </p>

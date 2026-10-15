@@ -97,14 +97,14 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
       {cases.length === 0 ? (
         <Empty text="没有符合条件的案例" />
       ) : (
-        <div className="divide-y divide-hairline-soft rounded-lg border border-hairline bg-canvas">
+        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
           {cases.map((c) => (
             <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
               <div className="min-w-0">
-                <Link href={`/cases/${c.id}`} className="block truncate text-sm font-medium text-ink hover:text-link">
+                <Link href={`/cases/${c.id}`} className="block truncate text-sm font-medium text-ink-black transition-colors hover:text-cyan-edge">
                   {c.title}
                 </Link>
-                <p className="mt-0.5 text-xs text-steel">
+                <p className="mt-0.5 text-xs text-warm-gray">
                   {c.category.name} · {c.author.name} · {c.submittedAt.toLocaleDateString("zh-CN")}
                 </p>
               </div>

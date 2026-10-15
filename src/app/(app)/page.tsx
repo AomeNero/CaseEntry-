@@ -2,27 +2,27 @@ import Link from "next/link";
 import { pointsLeaderboard, type LeaderboardRow } from "@/lib/points-queries";
 import { recentPublished } from "@/lib/case-queries";
 import { GradeBadge } from "@/components/badges";
-import { Card, Empty, PageTitle } from "@/components/ui";
+import { Card, Empty } from "@/components/ui";
 
 function Board({ title, rows }: { title: string; rows: LeaderboardRow[] }) {
   return (
     <Card>
-      <h2 className="mb-3 text-base font-semibold text-ink">{title}</h2>
+      <h2 className="mb-2 text-sm font-medium text-warm-gray">{title}</h2>
       {rows.length === 0 ? (
-        <p className="py-4 text-center text-sm text-stone">暂无数据</p>
+        <p className="py-4 text-center text-sm text-warm-gray">暂无数据</p>
       ) : (
-        <ol className="space-y-1.5">
+        <ol className="divide-y divide-stone-border">
           {rows.map((r) => (
-            <li key={r.rank} className="flex items-center gap-3 text-sm">
+            <li key={r.rank} className="flex items-center gap-3 py-2 text-sm">
               <span
-                className={`w-6 text-center font-semibold ${
-                  r.rank <= 3 ? "text-primary" : "text-stone"
+                className={`w-6 text-center font-display ${
+                  r.rank <= 3 ? "text-ink-black" : "text-ash-gray"
                 }`}
               >
                 {r.rank}
               </span>
-              <span className="flex-1 truncate text-charcoal">{r.name}</span>
-              <span className="font-semibold text-ink">{r.points} 分</span>
+              <span className="flex-1 truncate text-ink-black">{r.name}</span>
+              <span className="font-medium text-ink-black">{r.points} 分</span>
             </li>
           ))}
         </ol>
@@ -40,39 +40,50 @@ export default async function HomePage() {
 
   return (
     <div>
-      <PageTitle title="最近入库" desc="最新通过终审定级的案例" />
-      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-        <section>
-          {feed.length === 0 ? (
-            <Empty text="还没有入库案例——去「录入案例」提交第一个吧" />
-          ) : (
-            <div className="divide-y divide-hairline-soft rounded-lg border border-hairline bg-canvas">
-              {feed.map((c) => (
-                <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div className="min-w-0">
-                    <Link
-                      href={`/cases/${c.id}`}
-                      className="block truncate text-sm font-medium text-ink hover:text-link"
-                    >
-                      {c.title}
-                    </Link>
-                    <p className="mt-0.5 text-xs text-steel">
-                      {c.category.name} · {c.author.name} ·{" "}
-                      {c.publishedAt?.toLocaleDateString("zh-CN")}
-                    </p>
-                  </div>
-                  {c.grade && <GradeBadge grade={c.grade as "A" | "B" | "C"} />}
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
+      <section className="mb-10">
+        <h1 className="font-display text-heading-sm font-normal text-ink-black">
+          把好案例，
+          <span className="rounded bg-sky-wash px-2 text-cyan-edge">攒成积分</span>
+        </h1>
+        <p className="mt-2 text-sm text-warm-gray">
+          提交产品案例，经初审、终审定级入库，按等级发放积分。
+        </p>
+      </section>
 
-        <aside className="space-y-6">
-          <Board title="积分总榜" rows={totalBoard} />
-          <Board title="本月积分榜" rows={monthlyBoard} />
-        </aside>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Board title="积分总榜" rows={totalBoard} />
+        <Board title="本月积分榜" rows={monthlyBoard} />
       </div>
+
+      <section className="mt-10">
+        <div className="mb-4">
+          <h2 className="font-display text-subheading font-normal text-ink-black">最近入库</h2>
+          <p className="mt-0.5 text-sm text-warm-gray">最新通过终审定级的案例</p>
+        </div>
+        {feed.length === 0 ? (
+          <Empty text="还没有入库案例——去「录入案例」提交第一个吧" />
+        ) : (
+          <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+            {feed.map((c) => (
+              <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                <div className="min-w-0">
+                  <Link
+                    href={`/cases/${c.id}`}
+                    className="block truncate text-sm font-medium text-ink-black transition-colors hover:text-cyan-edge"
+                  >
+                    {c.title}
+                  </Link>
+                  <p className="mt-0.5 text-xs text-warm-gray">
+                    {c.category.name} · {c.author.name} ·{" "}
+                    {c.publishedAt?.toLocaleDateString("zh-CN")}
+                  </p>
+                </div>
+                {c.grade && <GradeBadge grade={c.grade as "A" | "B" | "C"} />}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

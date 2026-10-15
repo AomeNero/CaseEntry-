@@ -12,16 +12,21 @@ export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, initial);
 
   return (
-    <div className="w-full max-w-sm">
-      <div className="mb-8 text-center">
-        <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-lg font-bold text-white">
-          CE
-        </div>
-        <h1 className="text-2xl font-semibold text-white">登录 CaseEntry</h1>
-        <p className="mt-1.5 text-sm text-on-dark-muted">产品案例录入与积分系统</p>
+    <div className="w-full max-w-sm rounded-feature-card border border-stone-border bg-pure-white p-8">
+      <div className="mb-6 text-center">
+        <svg
+          viewBox="0 0 24 24"
+          className="mx-auto mb-3 h-5 w-5 text-ink-black"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" />
+        </svg>
+        <h1 className="font-display text-heading-sm font-normal text-ink-black">登录 CaseEntry</h1>
+        <p className="mt-1.5 text-sm text-warm-gray">产品案例录入与积分系统</p>
       </div>
 
-      <form action={formAction} className="space-y-4 rounded-lg bg-canvas p-6 shadow-2xl">
+      <form action={formAction} className="space-y-4">
         <FormError message={state.error} />
         <div>
           <Label htmlFor="username">用户名</Label>
@@ -34,9 +39,9 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={pending}>
           {pending ? "登录中…" : "登录"}
         </Button>
-        <p className="text-center text-sm text-steel">
+        <p className="text-center text-sm text-warm-gray">
           还没有账号？{" "}
-          <Link href="/register" className="font-medium text-link">
+          <Link href="/register" className="font-medium text-cyan-edge transition-colors hover:text-cyan-signal">
             立即注册
           </Link>
         </p>

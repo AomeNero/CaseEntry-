@@ -63,7 +63,7 @@ export function ReviewForm({
           placeholder="说明问题，方便录入人修改后重新提交"
         />
       </div>
-      <Button type="submit" name="action" value="reject" variant="danger" disabled={pending}>
+      <Button type="submit" name="action" value="reject" variant="outline" disabled={pending}>
         驳回
       </Button>
     </form>

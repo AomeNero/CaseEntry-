@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { ROLE } from "@/lib/roles";
 import { setUserDisabledAction, setUserRoleAction } from "@/app/actions/admin";
 import { ResetPasswordButton } from "@/components/admin/reset-password-button";
+import { ConfirmButton } from "@/components/confirm-button";
 import { Button, PageTitle } from "@/components/ui";
 
 export default async function AdminUsersPage() {
@@ -75,13 +76,18 @@ export default async function AdminUsersPage() {
                         <form action={setUserDisabledAction}>
                           <input type="hidden" name="userId" value={u.id} />
                           <input type="hidden" name="disabled" value={u.disabled ? "false" : "true"} />
-                          <Button
-                            type="submit"
-                            variant={u.disabled ? "secondary" : "danger"}
-                            className="px-2.5 py-1 text-xs"
-                          >
-                            {u.disabled ? "启用" : "禁用"}
-                          </Button>
+                          {u.disabled ? (
+                            <Button type="submit" variant="secondary" className="px-2.5 py-1 text-xs">
+                              启用
+                            </Button>
+                          ) : (
+                            <ConfirmButton
+                              message="确认禁用该账号？禁用后立即无法登录。"
+                              className="px-2.5 py-1 text-xs"
+                            >
+                              禁用
+                            </ConfirmButton>
+                          )}
                         </form>
                         <ResetPasswordButton userId={u.id} />
                       </div>

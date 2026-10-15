@@ -2,7 +2,8 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { deleteCategoryAction } from "@/app/actions/admin";
 import { CategoryAddForm } from "@/components/admin/category-add-form";
-import { Button, Card, Empty, PageTitle } from "@/components/ui";
+import { ConfirmButton } from "@/components/confirm-button";
+import { Card, Empty, PageTitle } from "@/components/ui";
 
 export default async function AdminCategoriesPage() {
   await requireAdmin();
@@ -31,15 +32,14 @@ export default async function AdminCategoriesPage() {
                 <span className="text-xs text-steel">{c._count.cases} 个案例</span>
                 <form action={deleteCategoryAction}>
                   <input type="hidden" name="categoryId" value={c.id} />
-                  <Button
-                    type="submit"
-                    variant="danger"
+                  <ConfirmButton
+                    message="确认删除该分类？"
                     className="px-2.5 py-1 text-xs"
                     disabled={c._count.cases > 0}
                     title={c._count.cases > 0 ? "有案例的分类不可删除" : undefined}
                   >
                     删除
-                  </Button>
+                  </ConfirmButton>
                 </form>
               </div>
             </div>

@@ -1,79 +1,13 @@
 @import "tailwindcss";
 
 /*
- * DESIGN.md token 映射（Notion 风格设计系统）
- * 颜色/圆角/字体 token 一比一落成 Tailwind v4 @theme 变量，
- * 生成 bg-primary、rounded-lg、text-steel 等工具类。
+ * DESIGN.md token 映射（Seline 设计语言，ADR-0005 单色纪律）
+ * 颜色/字体/字阶/圆角/阴影 token 一比一落成 Tailwind v4 @theme 变量。
+ * 注意：不落 DESIGN.md 的 --spacing-* 固定像素刻度——会覆盖 Tailwind
+ * 默认动态 spacing（p-4 等），破坏全部存量工具类；间距沿用 Tailwind 默认。
  */
 @theme {
-  /* 品牌与主色 */
-  --color-primary: #5645d4;
-  --color-primary-pressed: #4534b3;
-  --color-primary-deep: #3a2a99;
-  --color-navy: #0a1530;
-  --color-navy-deep: #070f24;
-  --color-navy-mid: #1a2a52;
-  --color-link: #0075de;
-
-  /* 品牌色板 */
-  --color-brand-pink: #ff64c8;
-  --color-brand-orange: #dd5b00;
-  --color-brand-purple: #7b3ff2;
-  --color-brand-teal: #2a9d99;
-  --color-brand-green: #1aae39;
-  --color-brand-yellow: #f5d75e;
-
-  /* 卡片粉彩色 */
-  --color-tint-peach: #ffe8d4;
-  --color-tint-rose: #fde0ec;
-  --color-tint-mint: #d9f3e1;
-  --color-tint-lavender: #e6e0f5;
-  --color-tint-sky: #dcecfa;
-  --color-tint-yellow: #fef7d6;
-  --color-tint-yellow-bold: #f9e79f;
-  --color-tint-cream: #f8f5e8;
-
-  /* 表面与边框 */
-  --color-canvas: #ffffff;
-  --color-surface: #f6f5f4;
-  --color-surface-soft: #fafaf9;
-  --color-hairline: #e5e3df;
-  --color-hairline-soft: #ede9e4;
-  --color-hairline-strong: #c8c4be;
-
-  /* 文字 */
-  --color-ink: #1a1a1a;
-  --color-ink-deep: #000000;
-  --color-charcoal: #37352f;
-  --color-slate: #5d5b54;
-  --color-steel: #787671;
-  --color-stone: #a4a097;
-  --color-muted: #bbb8b1;
-  --color-on-dark: #ffffff;
-  --color-on-dark-muted: #a4a097;
-
-  /* 语义色 */
-  --color-success: #1aae39;
-  --color-warning: #dd5b00;
-  --color-error: #e03131;
-
-  /* 圆角：按钮 8px / 卡片 12px（Notion 矩形几何，不用药丸按钮） */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-
-  --font-sans: var(--font-inter), Inter, -apple-system, "Segoe UI",
-    "Microsoft YaHei", sans-serif;
-
-  /*
-   * Seline 设计语言 token（DESIGN.md「Style Reference」一比一）
-   * 过渡期与旧 token 并存；全部页面迁移后由清算票删除旧 token。
-   * 注意：不落 DESIGN.md 的 --spacing-* 固定像素刻度——会覆盖 Tailwind
-   * 默认动态 spacing（p-4 等），破坏全部存量工具类；间距沿用 Tailwind 默认。
-   */
-  /* 色板：暖石画布 + 唯一青色 */
+  /* 色板：暖石画布 + 唯一青色（不新增任何色相） */
   --color-stone-canvas: #fafaf9;
   --color-pure-white: #ffffff;
   --color-stone-border: #e8e6e5;
@@ -86,7 +20,9 @@
   --color-cyan-signal: #3ba6f1;
   --color-cyan-edge: #3398e1;
 
-  /* 字体：展示/标题用 Inter Tight（Roobert 替代），正文仍 --font-sans */
+  /* 字体：展示/标题用 Inter Tight（Roobert 替代），正文用 Inter */
+  --font-sans: var(--font-inter), Inter, -apple-system, "Segoe UI",
+    "Microsoft YaHei", sans-serif;
   --font-display: var(--font-inter-tight), Inter Tight, Inter, ui-sans-serif,
     system-ui, sans-serif;
 
@@ -107,13 +43,13 @@
   --text-display--line-height: 1.12;
   --text-display--letter-spacing: -1.092px;
 
-  /* 圆角：药丸用默认 rounded-full；按钮/标签同值；命名圆角避让旧刻度 */
+  /* 圆角：药丸用默认 rounded-full；按钮/标签同值 */
   --radius-icons: 4px;
   --radius-inputs: 6px;
   --radius-cards: 10px;
   --radius-feature-card: 16px;
 
-  /* 阴影 */
+  /* 阴影：内容卡不加阴影，深阴影留给每页唯一的浮起预览 */
   --shadow-md: rgba(0, 0, 0, 0.05) 0px 4px 16px 0px;
   --shadow-sm: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
     rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
@@ -122,7 +58,7 @@
 }
 
 body {
-  background: var(--color-canvas);
-  color: var(--color-ink);
+  background: var(--color-stone-canvas);
+  color: var(--color-ink-black);
   font-family: var(--font-sans);
 }

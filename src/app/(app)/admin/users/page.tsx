@@ -49,7 +49,7 @@ export default async function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">{u._count.cases}</td>
-                  <td className="px-4 py-3 text-slate">{u.createdAt.toLocaleDateString("zh-CN")}</td>
+                  <td className="px-4 py-3 text-warm-gray">{u.createdAt.toLocaleDateString("zh-CN")}</td>
                   <td className="px-4 py-3">
                     {u.disabled ? (
                       <span className="rounded-full border border-dashed border-stone-muted px-2 py-0.5 text-xs font-medium text-ash-gray">

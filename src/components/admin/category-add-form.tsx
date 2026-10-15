@@ -12,7 +12,7 @@ export function CategoryAddForm() {
       <div className="flex-1">
         <FormError message={state.error} />
         {state.success && (
-          <p className="rounded-md border border-success/30 bg-tint-mint px-3 py-2 text-sm text-charcoal">
+          <p className="rounded-inputs border border-stone-muted bg-stone-canvas px-3 py-2 text-sm font-medium text-ink-black">
             {state.success}
           </p>
         )}

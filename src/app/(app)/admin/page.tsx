@@ -28,9 +28,9 @@ function QueueSection({
 }) {
   return (
     <section className="mb-8">
-      <h2 className="mb-3 text-base font-semibold text-ink">
+      <h2 className="mb-3 font-display text-subheading font-normal text-ink-black">
         {title}
-        <span className="ml-2 rounded-sm bg-surface px-2 py-0.5 text-xs font-medium text-steel">
+        <span className="ml-2 rounded-full bg-stone-canvas px-2 py-0.5 text-xs font-medium text-warm-gray">
           {items.length}
         </span>
       </h2>
@@ -41,10 +41,10 @@ function QueueSection({
           {items.map((c) => (
             <Card key={c.id} className="p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <Link href={`/cases/${c.id}`} className="text-sm font-medium text-ink hover:text-link">
+                <Link href={`/cases/${c.id}`} className="text-sm font-medium text-ink-black transition-colors hover:text-cyan-edge">
                   {c.title}
                 </Link>
-                <span className="text-xs text-steel">
+                <span className="text-xs text-warm-gray">
                   {c.authorName} · {c.date.toLocaleString("zh-CN")}
                 </span>
               </div>

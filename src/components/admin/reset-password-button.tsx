@@ -16,8 +16,8 @@ export function ResetPasswordButton({ userId }: { userId: string }) {
           重置密码
         </Button>
       </form>
-      {state.success && <p className="mt-1 max-w-48 text-xs text-success">{state.success}</p>}
-      {state.error && <p className="mt-1 text-xs text-error">{state.error}</p>}
+      {state.success && <p className="mt-1 max-w-48 text-xs text-warm-gray">{state.success}</p>}
+      {state.error && <p className="mt-1 text-xs font-medium text-ink-black">{state.error}</p>}
     </div>
   );
 }

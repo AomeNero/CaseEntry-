@@ -44,10 +44,10 @@ export default async function AdminReportPage({ searchParams }: { searchParams: 
         </form>
       </Card>
 
-      <div className="overflow-x-auto rounded-lg border border-hairline bg-canvas">
+      <div className="overflow-x-auto rounded-cards border border-stone-border bg-pure-white">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-hairline bg-surface-soft text-left text-xs font-semibold text-steel">
+            <tr className="border-b border-stone-border bg-stone-canvas text-left text-xs font-medium text-warm-gray">
               <th className="px-4 py-3">录入人</th>
               <th className="px-4 py-3">用户名</th>
               <th className="px-4 py-3 text-right">期间提交案例</th>
@@ -55,20 +55,20 @@ export default async function AdminReportPage({ searchParams }: { searchParams: 
               <th className="px-4 py-3 text-right">累计积分</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-hairline-soft">
+          <tbody className="divide-y divide-stone-border">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-sm text-stone">
+                <td colSpan={5} className="px-4 py-10 text-center text-sm text-warm-gray">
                   该时间段内没有录入记录
                 </td>
               </tr>
             ) : (
               rows.map((r) => (
-                <tr key={r.userId} className="text-charcoal">
+                <tr key={r.userId} className="text-ink-black">
                   <td className="px-4 py-3 font-medium">{r.name}</td>
-                  <td className="px-4 py-3 text-slate">{r.username}</td>
+                  <td className="px-4 py-3 text-warm-gray">{r.username}</td>
                   <td className="px-4 py-3 text-right">{r.casesInPeriod}</td>
-                  <td className="px-4 py-3 text-right font-semibold text-primary">{r.pointsInPeriod}</td>
+                  <td className="px-4 py-3 text-right font-medium">{r.pointsInPeriod}</td>
                   <td className="px-4 py-3 text-right">{r.pointsTotal}</td>
                 </tr>
               ))
@@ -76,12 +76,12 @@ export default async function AdminReportPage({ searchParams }: { searchParams: 
           </tbody>
           {rows.length > 0 && (
             <tfoot>
-              <tr className="border-t border-hairline bg-surface-soft font-semibold text-ink">
+              <tr className="border-t border-stone-border bg-stone-canvas font-medium text-ink-black">
                 <td className="px-4 py-3" colSpan={2}>
                   合计（{rows.length} 人）
                 </td>
                 <td className="px-4 py-3 text-right">{sumCases}</td>
-                <td className="px-4 py-3 text-right text-primary">{sumPoints}</td>
+                <td className="px-4 py-3 text-right">{sumPoints}</td>
                 <td className="px-4 py-3" />
               </tr>
             </tfoot>

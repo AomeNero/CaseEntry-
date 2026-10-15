@@ -17,10 +17,10 @@ export default async function AdminUsersPage() {
     <div>
       <PageTitle title="账号管理" desc="禁用账号立即失效（会话校验以数据库为准）；重置密码生成临时密码" />
 
-      <div className="overflow-x-auto rounded-lg border border-hairline bg-canvas">
+      <div className="overflow-x-auto rounded-cards border border-stone-border bg-pure-white">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
-            <tr className="border-b border-hairline bg-surface-soft text-left text-xs font-semibold text-steel">
+            <tr className="border-b border-stone-border bg-stone-canvas text-left text-xs font-medium text-warm-gray">
               <th className="px-4 py-3">姓名</th>
               <th className="px-4 py-3">用户名</th>
               <th className="px-4 py-3">角色</th>
@@ -30,19 +30,19 @@ export default async function AdminUsersPage() {
               <th className="px-4 py-3">操作</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-hairline-soft">
+          <tbody className="divide-y divide-stone-border">
             {users.map((u) => {
               const isSelf = u.id === admin.id;
               return (
-                <tr key={u.id} className="text-charcoal">
+                <tr key={u.id} className="text-ink-black">
                   <td className="px-4 py-3 font-medium">{u.name}</td>
-                  <td className="px-4 py-3 text-slate">{u.username}</td>
+                  <td className="px-4 py-3 text-warm-gray">{u.username}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`rounded-sm px-2 py-0.5 text-xs font-semibold ${
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                         u.role === ROLE.ADMIN
-                          ? "bg-tint-lavender text-primary-deep"
-                          : "bg-surface text-slate"
+                          ? "bg-ink-black text-white"
+                          : "bg-stone-canvas text-warm-gray"
                       }`}
                     >
                       {u.role === ROLE.ADMIN ? "管理员" : "用户"}
@@ -52,18 +52,18 @@ export default async function AdminUsersPage() {
                   <td className="px-4 py-3 text-slate">{u.createdAt.toLocaleDateString("zh-CN")}</td>
                   <td className="px-4 py-3">
                     {u.disabled ? (
-                      <span className="rounded-sm bg-tint-rose px-2 py-0.5 text-xs font-semibold text-error">
+                      <span className="rounded-full border border-dashed border-stone-muted px-2 py-0.5 text-xs font-medium text-ash-gray">
                         已禁用
                       </span>
                     ) : (
-                      <span className="rounded-sm bg-tint-mint px-2 py-0.5 text-xs font-semibold text-brand-green">
+                      <span className="rounded-full border border-stone-muted px-2 py-0.5 text-xs font-medium text-ink-black">
                         正常
                       </span>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     {isSelf ? (
-                      <span className="text-xs text-stone">（当前登录账号）</span>
+                      <span className="text-xs text-ash-gray">（当前登录账号）</span>
                     ) : (
                       <div className="flex flex-wrap items-start gap-2">
                         <form action={setUserRoleAction}>

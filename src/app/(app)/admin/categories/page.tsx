@@ -17,19 +17,19 @@ export default async function AdminCategoriesPage() {
       <PageTitle title="分类管理" desc="录入表单的下拉选项来源；有案例的分类不可删除" />
 
       <Card className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-ink">添加分类</h2>
+        <h2 className="mb-3 text-sm font-medium text-ink-black">添加分类</h2>
         <CategoryAddForm />
       </Card>
 
       {categories.length === 0 ? (
         <Empty text="还没有分类，请先添加" />
       ) : (
-        <div className="divide-y divide-hairline-soft rounded-lg border border-hairline bg-canvas">
+        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
           {categories.map((c) => (
             <div key={c.id} className="flex items-center justify-between px-5 py-3">
-              <span className="text-sm text-charcoal">{c.name}</span>
+              <span className="text-sm text-ink-black">{c.name}</span>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-steel">{c._count.cases} 个案例</span>
+                <span className="text-xs text-warm-gray">{c._count.cases} 个案例</span>
                 <form action={deleteCategoryAction}>
                   <input type="hidden" name="categoryId" value={c.id} />
                   <ConfirmButton

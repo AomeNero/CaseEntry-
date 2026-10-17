@@ -38,13 +38,13 @@ CaseEntry 当前的界面是一套紫色主色 + navy 深色系 + 粉彩状态�
 ## Implementation Decisions
 
 - **纯视觉层重设计**：路由、页面结构、查询逻辑、server action 零变动；不引入任何新依赖（无 clsx/radix/cva），组件变体保持字符串映射风格。
-- **Token 换血采用 expand–contract**：先在全局主题层新增 Seline 全套 token（旧 token 并存不破坏），各页面批次迁移到新 token，最后删除旧 token 与失去用途的旧变体。token 命名与取值照抄 `DESIGN.md` 的 Tailwind v4 `@theme` 清单。
+- **Token 换血采用 expand–contract**：先在全局主题层新增 Seline 全套 token（旧 token 并存不破坏），各页面批次迁移到新 token，最后删除旧 token 与失去用途的旧变体。token 命名与取值照抄 `DESIGN.md` 的 Tailwind v4 `@theme` 清单（唯一例外：不落 `--spacing-*` 固定像素刻度——会覆盖 Tailwind 默认动态 spacing，破坏存量工具类，间距沿用 Tailwind 默认）。
 - **单色纪律（立 ADR-0006）**：全站唯一色相为青色三调（cyan-signal / cyan-edge / sky-wash）+ 石色灰阶 + 墨黑/煤黑；驳回不用红、表单错误不用红、破坏性按钮不用红。状态徽章四态与等级 A/B/C 用填充/描边/深浅组合区分。
 - **字体**：Inter Tight（展示/标题，weight 400、负字距）+ Inter（正文 14px、行高 1.64），沿用现有 Google 字体加载机制；Roobert 为商业字体不可用。
-- **标题体系**：页面标题 32px heading-sm、区块/卡片小标题 20px subheading；青色高亮短语（青字 + 天青药丸底）仅允许出现在首页 hero 与 404 页，每处至多一个。
+- **标题体系**：页面标题 32px heading-sm、区块/卡片小标题 20px subheading；青色高亮短语（青字 + 天青药丸底）仅允许出现在首页 hero 与 404 页，每处至多一个；徽章/标签对天青底（sky-wash）的中性使用不在此限。
 - **按钮体系**：药丸形；青色实心 = 页面唯一 chromatic 元素且至多一个视口主行动；墨黑描边 = 驳回等次级动作；墨黑实心 + 原生 confirm 二次确认 = 删除分类/禁用账号等不可逆操作。
 - **首页**：工作台定位——克制 hero（32px 标题 + 一句副题 + 一处高亮）→ 双榜两列卡片（总榜/本月榜 TOP10，各页主角位）→ 最近入库列表；hero 文案在截图评审时定稿。
-- **导航**：普通用户 4 链接 + 管理员入口收进「管理」下拉（导航本就是 client 组件）；右侧保留用户名/管理员徽章/退出；logo 改为小线条火花 + CaseEntry 字标；无吉祥物。
+- **导航**：普通用户 5 链接 + 管理员入口收进「管理」下拉（导航本就是 client 组件）；右侧保留用户名/管理员徽章/退出；logo 改为小线条火花 + CaseEntry 字标；无吉祥物。
 - **登录/注册**：深色全屏改为暖石画布 + 居中白卡片。
 - **桌面优先**：维持 flex-wrap 换行式响应，不引入汉堡菜单。
 - **smoke 文案锚点逐字保护**：`登录 CaseEntry`、`注册 CaseEntry`、`本月积分榜`、`积分流水`、`通过初审`、`待初审`、`修改后重新提交`、`提为管理员`、`合计` 等全部现有断言文案不可改名。

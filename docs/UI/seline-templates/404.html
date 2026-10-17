@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Whoops… — Seline</title>
+<meta name="robots" content="noindex"/>
+<meta name="theme-color" content="#fafaf9"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#FAFAF9; --ink:#1C1917; --ink-soft:#44403C; --muted:#79716B;
+  --line:#E7E5E3; --line-strong:#D6D3D0;
+  --accent:#F3541C; --accent-ink:#D84412;
+  --font:"Figtree",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-weight:600;font-size:15.5px;padding:12px 26px;border:1px solid transparent;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{box-shadow:0 6px 18px -6px rgba(28,25,23,.4)}
+.btn-ghost{background:#fff;border-color:var(--line-strong)}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;background:#fff;border:1px solid var(--line-strong);border-bottom-width:3px;border-radius:8px;font-family:var(--mono);font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.key:active{border-bottom-width:1px;transform:translateY(2px)}
+
+.nav{display:flex;align-items:center;justify-content:center;padding:22px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.03em}
+.logo b{color:var(--accent)}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.nf{text-align:center;position:relative;max-width:560px}
+.nf .orbit{width:150px;height:150px;margin:0 auto 8px;position:relative}
+.nf .orbit .ring{position:absolute;inset:0;border:2px dashed var(--line-strong);border-radius:50%;animation:spin 22s linear infinite}
+.nf .orbit .core{position:absolute;inset:30px;background:#fff;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:34px;letter-spacing:-.04em;box-shadow:0 1px 2px rgba(28,25,23,.06),0 8px 24px -12px rgba(28,25,23,.12)}
+.nf .orbit .core i{font-style:normal;color:var(--accent)}
+.nf .orbit .st{position:absolute;top:-6px;right:14px;color:var(--accent);animation:tw 3s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes tw{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(.68);opacity:.45}}
+.nf h1{margin:18px 0 0;font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.035em}
+.nf p{margin:14px auto 0;color:var(--muted);font-size:17px;max-width:420px}
+.nf .hint{margin-top:22px;font-size:14px;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
+.nf .cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
+.nf .links{margin-top:26px;font-size:14.5px;color:var(--muted)}
+.nf .links a{font-weight:600;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
+.nf .links a:hover{color:var(--accent-ink)}
+
+footer{text-align:center;padding:22px;font-size:13px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){.nf .orbit .ring,.nf .orbit .st{animation:none}}
+</style>
+</head>
+<body>
+
+<nav><a class="logo" href="index.html">seline<b>.</b></a></nav>
+
+<main>
+  <div class="nf">
+    <div class="orbit">
+      <div class="ring" aria-hidden="true"></div>
+      <div class="core">4<i>0</i>4</div>
+      <svg class="st" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c.6 6.6 5.4 11.4 12 12-6.6.6-11.4 5.4-12 12-.6-6.6-5.4-11.4-12-12C6.6 11.4 11.4 6.6 12 0z"/></svg>
+    </div>
+    <h1>Whoops… there's no such page</h1>
+    <p>This URL returned a 404. Even our analytics can't track what doesn't exist — but we can get you back on track.</p>
+    <span class="hint">tip: press <span class="key">H</span> to go home</span>
+    <div class="cta">
+      <a class="btn btn-dark" href="index.html">Back to homepage</a>
+      <a class="btn btn-ghost" href="pricing.html">View pricing</a>
+    </div>
+    <p class="links">Or read something useful in the <a href="blog.html">blog</a> →</p>
+  </div>
+</main>
+
+<footer>© 2026 Seline Analytics · Made in EU 🇪🇺</footer>
+
+<script>
+document.addEventListener("keydown",e=>{
+  if(e.key==="h"||e.key==="H")location.href="index.html";
+});
+</script>
+</body>
+</html>

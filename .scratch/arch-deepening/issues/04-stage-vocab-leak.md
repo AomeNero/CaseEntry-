@@ -22,6 +22,8 @@ case-state 缺 `STAGE_LABELS`（环节中文标签）与 status→stage 逆向�
 
 ## 落地
 
+提交 `543d16c`。
+
 - `case-state` 新增 `STAGE_LABELS` 与 `stageForStatus`（由 `EXPECTED_STATUS` 反查）
 - 案例库筛选下拉改由 `CASE_STATUSES + STATUS_LABELS` 生成；详情页改用 `stageForStatus + STAGE_LABELS`；审核表单改用 `GRADES`
 - `validation.ts` 的等级/环节枚举改用 `z.enum(GRADES / REVIEW_STAGES)`

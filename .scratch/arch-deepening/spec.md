@@ -11,7 +11,7 @@
 | 5a | cases/new 逐字重复 listCategories | ✅ 已落地 | cb74824（2026-10-15 code-review 收尾） |
 | 2 | 迁移+发分组合提升为 module | ✅ 已落地 | 384077f（2026-10-17，ADR-0007） |
 | 4 | 状态/环节词汇泄漏 | ✅ 已落地 | 543d16c（2026-10-17，ADR-0008） |
-| 5b | admin/points 手写积分口径 | ✅ 已落地（2026-10-17） | issues/05-query-bypass.md |
+| 5b | admin/points 手写积分口径 | ✅ 已落地 | 911f5f1（2026-10-17） |
 | 6 | 「终审不能直接通过」5 处分布 | open（倾向仅注释） | issues/06-final-grade-guard-scatter.md |
 | 7 | parseForm 吸收字段抽取 | open（shallow，随二期顺带） | issues/07-parseform-field-absorb.md |
 

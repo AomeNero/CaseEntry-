@@ -20,6 +20,8 @@ admin/points 页改用 points-queries 的口径函数。管理表单需要的键
 
 ## 落地
 
+提交 `911f5f1`。
+
 `admin/points` 页改用 `getPointConfigValues()`，页面内 `db.pointsConfig.findMany()` 与手写 `Object.fromEntries` 删除。`db.pointsConfig.findMany` 现在只剩 `src/lib/points.ts` 一处；表单对缺键的 `?? 0` 兜底使渲染结果不变。
 
 - 验证：typecheck ✓、lint ✓、vitest 73/73 ✓、smoke 21/21 ✓

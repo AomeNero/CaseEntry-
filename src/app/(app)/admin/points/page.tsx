@@ -1,12 +1,11 @@
-import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { getPointConfigValues } from "@/lib/points";
 import { PointsConfigForm } from "@/components/admin/points-config-form";
 import { PageTitle } from "@/components/ui";
 
 export default async function AdminPointsPage() {
   await requireAdmin();
-  const configs = await db.pointsConfig.findMany();
-  const values = Object.fromEntries(configs.map((c) => [c.key, c.value]));
+  const values = await getPointConfigValues();
 
   return (
     <div className="max-w-xl">

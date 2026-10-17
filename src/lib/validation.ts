@@ -36,7 +36,9 @@ export const caseFormSchema = z.object({
   categoryId: z.string().min(1, "请选择产品分类"),
 });
 
-/** 审核动作按环节耦合：初审=通过/驳回；终审=定级/驳回。终审不存在"直接通过"。 */
+/** 审核动作按环节耦合：初审=通过/驳回；终审=定级/驳回。终审不存在"直接通过"。
+ *  本约束的权威拦截在 case-state.decideReview，UI 表现见 components/review-form；
+ *  改动任一层时三处需同步（ADR-0001 双层防御）。 */
 export const reviewActionSchema = z.discriminatedUnion("action", [
   z.object({ stage: z.literal("FIRST"), action: z.literal("approve") }),
   z.object({

@@ -103,6 +103,9 @@ export function stageForStatus(status: CaseStatus): ReviewStage | null {
 /**
  * 审核动作的唯一执法点：给定当前状态与（环节, 动作），要么返回完整迁移补丁，
  * 要么返回领域错误。环节与动作在此强耦合——终审不存在"直接通过"，必须定级。
+ *
+ * 该约束同时由 validation.reviewActionSchema（结构判别）与 components/review-form
+ * （终审不渲染「通过」）守住；本处是权威拦截，改动任一层时三处需同步（ADR-0001）。
  */
 export function decideReview(current: CaseStatus, input: ReviewDecisionInput): Decision {
   const { stage, actorId, action } = input;
@@ -113,6 +116,7 @@ export function decideReview(current: CaseStatus, input: ReviewDecisionInput): D
   }
 
   if (action.type === "approve") {
+    // 终审不存在「直接通过」：FINAL + approve 已被 schema 拒绝，此处兜底（见函数头注释）
     if (stage !== "FIRST") {
       return { ok: false, error: "终审阶段请定级（A/B/C），不能直接通过" };
     }

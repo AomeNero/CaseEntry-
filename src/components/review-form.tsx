@@ -6,6 +6,8 @@ import { GRADES, type ReviewStage } from "@/lib/case-state";
 import { Button, FormError, Label, Textarea } from "@/components/ui";
 
 /** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回。
+ *  本组件只决定渲染，不承担校验；「终审不能直接通过」的权威拦截在
+ *  case-state.decideReview，结构判别在 validation.reviewActionSchema。
  *  初审积分提示由调用方从配置读取传入；redirectTo 决定审核完成后的落点。 */
 export function ReviewForm({
   caseId,
@@ -36,6 +38,7 @@ export function ReviewForm({
         </div>
       ) : (
         <div>
+          {/* 终审不渲染「通过」按钮：约束见 decideReview 与 reviewActionSchema */}
           <Label>终审定级</Label>
           <div className="flex flex-wrap items-center gap-2">
             <Button type="submit" name="action" value="grade" disabled={pending} className="px-4 py-2">

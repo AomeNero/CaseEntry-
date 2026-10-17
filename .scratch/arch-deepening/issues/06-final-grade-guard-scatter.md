@@ -1,6 +1,6 @@
 # 06: 「终审不能直接通过」约束多处分布
 
-Status: open
+Status: done (2026-10-17)
 Disposition: 倾向仅补互相指认注释（符合 ADR-0001 双层防御，不强行收编）
 Source: 2026-10-14 架构审查 #6
 
@@ -16,3 +16,21 @@ Source: 2026-10-14 架构审查 #6
 
 - 5 处分布点有互相指认注释
 - 行为不变，现有测试全绿
+
+## 重新盘点（2026-10-17）
+
+5 个表达点：
+
+1. `validation.ts` `reviewActionSchema`——`FINAL` 只配 `grade/reject`
+2. `case-state.decideReview` 函数头——权威拦截
+3. `decideReview` 的 `approve` 分支——兜底拦截
+4. `components/review-form` 组件头——职责声明（只渲染）
+5. `review-form` 的 FINAL 分支——不渲染「通过」
+
+排除项：首页 hero、录入页说明、admin 队列标题「（定级）」等文案只描述流程、不承担校验，未加同步注释，避免污染展示层。
+
+## 落地
+
+- 5 处均补互指注释；行为零变化
+- 验证：typecheck ✓、lint ✓、vitest 73/73 ✓
+- 无新 ADR：维持 ADR-0001 双层防御，按票面倾向不强行收编

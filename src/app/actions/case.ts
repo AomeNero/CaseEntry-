@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { saveUpload } from "@/lib/upload";
 import { awardPoints } from "@/lib/points";
+import { applyCaseTransition } from "@/lib/case-transitions";
 import { caseFormSchema } from "@/lib/validation";
 import { decideResubmit, type CaseStatus, type ReviewStage } from "@/lib/case-state";
 import { parseForm, type FormState } from "@/lib/form";
@@ -62,23 +63,26 @@ export async function resubmitCaseAction(_prev: FormState, formData: FormData): 
   const kase = await db.case.findUnique({ where: { id: caseId } });
   if (!kase || kase.authorId !== user.id) return { error: "案例不存在或无权操作" };
 
-  const decision = decideResubmit(kase.status as CaseStatus, kase.rejectedStage as ReviewStage | null);
+  // 决策与写时守卫共用同一个当前状态，二者不会漂移
+  const currentStatus = kase.status as CaseStatus;
+  const decision = decideResubmit(currentStatus, kase.rejectedStage as ReviewStage | null);
   if (!decision.ok) return { error: decision.error };
 
   const saved = await saveUpload(file instanceof File ? file : null);
   if ("error" in saved) return saved;
 
   // 写时守卫：并发下状态已变则落空
-  const { count } = await db.case.updateMany({
-    where: { id: caseId, status: kase.status },
-    data: {
+  const { applied } = await applyCaseTransition({
+    caseId,
+    expectedStatus: currentStatus,
+    patch: {
       title: parsed.data.title,
       categoryId: parsed.data.categoryId,
       ...decision.patch,
       ...saved,
     },
   });
-  if (count === 0) return { error: "案例状态已变化，请刷新后重试" };
+  if (!applied) return { error: "案例状态已变化，请刷新后重试" };
 
   redirect(`/cases/${caseId}`);
 }

@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { awardPoints } from "@/lib/points";
+import { applyCaseTransition } from "@/lib/case-transitions";
 import { reviewActionSchema } from "@/lib/validation";
 import { parseForm, safeRedirectTo } from "@/lib/form";
 import { decideReview, type CaseStatus, type ReviewActionInput } from "@/lib/case-state";
@@ -12,8 +12,7 @@ import type { FormState } from "@/lib/form";
 /**
  * 审核动作（初审/终审共用）。
  * 全部状态决策由 case-state 的 decideReview 做出；本函数只负责
- * 身份 → 解析表单 → 加载案例 → 应用补丁（带状态谓词的写时守卫）→ 发分。
- * 状态变更与积分发放同一事务。
+ * 身份 → 解析表单 → 加载案例 → 经 case-transitions 应用补丁（写时守卫）并原子发分。
  */
 export async function reviewAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await getCurrentAdmin();
@@ -45,24 +44,24 @@ export async function reviewAction(_prev: FormState, formData: FormData): Promis
   const kase = await db.case.findUnique({ where: { id: caseId } });
   if (!kase) return { error: "案例不存在" };
 
-  const decision = decideReview(kase.status as CaseStatus, {
+  // 决策与写时守卫共用同一个当前状态，二者不会漂移
+  const currentStatus = kase.status as CaseStatus;
+  const decision = decideReview(currentStatus, {
     stage: d.stage,
     actorId: user.id,
     action: actionInput,
   });
   if (!decision.ok) return { error: decision.error };
 
-  const applied = await db.$transaction(async (tx) => {
-    // 写时守卫：并发下状态已变则落空，不发分
-    const { count } = await tx.case.updateMany({
-      where: { id: caseId, status: kase.status },
-      data: decision.patch,
-    });
-    if (count === 0) return false;
-    if (decision.pointEvent) {
-      await awardPoints(tx, { caseId, userId: kase.authorId, ...decision.pointEvent });
-    }
-    return true;
+  // 写时守卫：并发下状态已变则落空，不发分
+  const { applied } = await applyCaseTransition({
+    caseId,
+    expectedStatus: currentStatus,
+    patch: decision.patch,
+    pointEvent: decision.pointEvent && {
+      userId: kase.authorId,
+      ...decision.pointEvent,
+    },
   });
   if (!applied) return { error: "案例状态已变化，请刷新后重试" };
 

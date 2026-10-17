@@ -25,6 +25,7 @@
 | 模块 | 位置 | 职责 |
 |---|---|---|
 | **案例状态机** | `src/lib/case-state.ts` | 状态/环节/等级词汇 + 迁移表 + `decideReview`/`decideResubmit`（状态写入唯一执法点，见 [ADR-0001](docs/adr/0001-案例状态机唯一执法点.md)） |
+| **案例迁移写入** | `src/lib/case-transitions.ts` | `applyCaseTransition`：写时守卫 + 可选同事务发分，写侧唯一事务形状（[ADR-0007](docs/adr/0007-写侧事务形状收敛为组合模块.md)） |
 | **可见性策略** | `src/lib/case-visibility.ts` | 「已入库全员可见；过程态仅录入人本人+管理员」的唯一来源（[ADR-0002](docs/adr/0002-可见性策略单点定义.md)） |
 | **积分词汇** | `src/lib/points-vocab.ts` | 事件/配置键/标签/默认值/键映射，纯常量零依赖（[ADR-0003](docs/adr/0003-积分词汇单一来源.md)） |
 | **积分发放** | `src/lib/points.ts` | `awardPoints`：事务内发放 + 唯一约束幂等 |
@@ -40,7 +41,7 @@
 
 ## 关键约定
 
-- **状态写入**必须经 `decide*` 取补丁，并以 `updateMany({ where: { id, status } })` 应用（写时守卫，并发安全）。
+- **状态写入**必须经 `decide*` 取补丁，并经 `applyCaseTransition` 应用（写时守卫 + 可选同事务发分，并发安全）。
 - **查询筛选**一律 AND 在可见性条件之内——只收窄、永不放宽。
 - **纯词汇文件**（case-state / points-vocab / roles / session-token / case-visibility）不引入 server-only 或 IO，client 组件与脚本可安全引用。
 - **测试**：纯函数表驱动 + test.db 集成（vitest 串行）；HTTP 冒烟 `scripts/smoke.ts` 兜底页面与鉴权路径。

@@ -8,7 +8,13 @@ import { ReviewForm } from "@/components/review-form";
 import { CaseForm } from "@/components/case-form";
 import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, PageTitle } from "@/components/ui";
-import type { CaseStatus, Grade, ReviewStage } from "@/lib/case-state";
+import {
+  STAGE_LABELS,
+  stageForStatus,
+  type CaseStatus,
+  type Grade,
+  type ReviewStage,
+} from "@/lib/case-state";
 import { canView } from "@/lib/case-visibility";
 import { ROLE } from "@/lib/roles";
 
@@ -26,8 +32,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
 
   const categories = isAuthor && kase.status === "REJECTED" ? await listCategories() : [];
   const points = await getPointConfigValues();
-  const reviewStage: ReviewStage | null =
-    kase.status === "PENDING_FIRST" ? "FIRST" : kase.status === "PENDING_FINAL" ? "FINAL" : null;
+  const reviewStage = stageForStatus(kase.status as CaseStatus);
 
   const meta: Array<[string, string]> = [
     ["产品分类", kase.category.name],
@@ -69,7 +74,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
       {kase.status === "REJECTED" && kase.rejectReason && (
         <Card className="mb-6 border-stone-muted bg-stone-canvas">
           <h2 className="mb-1 text-sm font-medium text-ink-black">
-            驳回理由（{kase.rejectedStage === "FIRST" ? "初审" : "终审"}）
+            驳回理由（{kase.rejectedStage ? STAGE_LABELS[kase.rejectedStage as ReviewStage] : ""}）
           </h2>
           <p className="whitespace-pre-wrap text-sm text-warm-gray">{kase.rejectReason}</p>
         </Card>
@@ -78,7 +83,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
       {isAdmin && reviewStage && (
         <Card className="mb-6">
           <h2 className="mb-1 font-display text-subheading font-normal text-ink-black">
-            {reviewStage === "FIRST" ? "初审" : "终审"}
+            {STAGE_LABELS[reviewStage]}
           </h2>
           <ReviewForm caseId={kase.id} stage={reviewStage} firstPassPoints={points.FIRST_PASS} redirectTo={`/cases/${kase.id}`} />
         </Card>

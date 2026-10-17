@@ -3,7 +3,13 @@ import { requireUser } from "@/lib/auth";
 import { listCases, listCategories } from "@/lib/case-queries";
 import { GradeBadge, StatusBadge } from "@/components/badges";
 import { Button, Card, Empty, Input, Label, ListCard, Select, PageTitle } from "@/components/ui";
-import { GRADES } from "@/lib/case-state";
+import {
+  CASE_STATUSES,
+  GRADES,
+  STATUS_LABELS,
+  type CaseStatus,
+  type Grade,
+} from "@/lib/case-state";
 import { ROLE } from "@/lib/roles";
 
 type SP = Record<string, string | string[] | undefined>;
@@ -73,10 +79,11 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
                 <Label htmlFor="status">状态</Label>
                 <Select id="status" name="status" defaultValue={status}>
                   <option value="">全部</option>
-                  <option value="PENDING_FIRST">待初审</option>
-                  <option value="PENDING_FINAL">待终审</option>
-                  <option value="PUBLISHED">已入库</option>
-                  <option value="REJECTED">已驳回</option>
+                  {CASE_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
+                  ))}
                 </Select>
               </div>
               <div>
@@ -109,8 +116,8 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
-                {isAdmin && <StatusBadge status={c.status as "PENDING_FIRST" | "PENDING_FINAL" | "PUBLISHED" | "REJECTED"} />}
-                {c.grade && <GradeBadge grade={c.grade as "A" | "B" | "C"} />}
+                {isAdmin && <StatusBadge status={c.status as CaseStatus} />}
+                {c.grade && <GradeBadge grade={c.grade as Grade} />}
               </div>
             </article>
           ))}

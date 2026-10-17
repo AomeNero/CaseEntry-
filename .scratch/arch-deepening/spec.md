@@ -10,7 +10,7 @@
 | 3 | saveUpload 收编必传规则，失败契约改判别联合 | ✅ 已落地 | 00d075e |
 | 5a | cases/new 逐字重复 listCategories | ✅ 已落地 | cb74824（2026-10-15 code-review 收尾） |
 | 2 | 迁移+发分组合提升为 module | ✅ 已落地 | 384077f（2026-10-17，ADR-0007） |
-| 4 | 状态/环节词汇泄漏 | open | issues/04-stage-vocab-leak.md |
+| 4 | 状态/环节词汇泄漏 | ✅ 已落地（2026-10-17，ADR-0008） | issues/04-stage-vocab-leak.md |
 | 5b | admin/points 手写积分口径 | open | issues/05-query-bypass.md |
 | 6 | 「终审不能直接通过」5 处分布 | open（倾向仅注释） | issues/06-final-grade-guard-scatter.md |
 | 7 | parseForm 吸收字段抽取 | open（shallow，随二期顺带） | issues/07-parseform-field-absorb.md |

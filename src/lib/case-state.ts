@@ -36,6 +36,9 @@ export const STATUS_LABELS: Record<CaseStatus, string> = {
 
 export const GRADE_LABELS: Record<Grade, string> = { A: "A级", B: "B级", C: "C级" };
 
+/** 审核环节中文标签 */
+export const STAGE_LABELS: Record<ReviewStage, string> = { FIRST: "初审", FINAL: "终审" };
+
 /** 审核通过后的目标状态 */
 export function statusOnApprove(stage: ReviewStage): CaseStatus {
   return stage === "FIRST" ? "PENDING_FINAL" : "PUBLISHED";
@@ -91,6 +94,11 @@ const EXPECTED_STATUS: Record<ReviewStage, CaseStatus> = {
   FIRST: "PENDING_FIRST",
   FINAL: "PENDING_FINAL",
 };
+
+/** 状态 → 所属审核环节（仅待审状态有环节；其余返回 null）。由 EXPECTED_STATUS 反查，避免第二份映射。 */
+export function stageForStatus(status: CaseStatus): ReviewStage | null {
+  return REVIEW_STAGES.find((stage) => EXPECTED_STATUS[stage] === status) ?? null;
+}
 
 /**
  * 审核动作的唯一执法点：给定当前状态与（环节, 动作），要么返回完整迁移补丁，

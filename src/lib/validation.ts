@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { GRADES, REVIEW_STAGES } from "./case-state";
 import { POINT_CONFIG_KEYS } from "./points-vocab";
 
 /** 上传白名单与限制（与 lib/upload.ts 共用） */
@@ -41,10 +42,10 @@ export const reviewActionSchema = z.discriminatedUnion("action", [
   z.object({
     stage: z.literal("FINAL"),
     action: z.literal("grade"),
-    grade: z.enum(["A", "B", "C"]),
+    grade: z.enum(GRADES),
   }),
   z.object({
-    stage: z.enum(["FIRST", "FINAL"]),
+    stage: z.enum(REVIEW_STAGES),
     action: z.literal("reject"),
     reason: z.string().trim().min(1, "驳回必须填写理由").max(500),
   }),

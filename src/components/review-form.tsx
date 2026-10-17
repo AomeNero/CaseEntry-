@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { reviewAction } from "@/app/actions/review";
-import type { ReviewStage } from "@/lib/case-state";
+import { GRADES, type ReviewStage } from "@/lib/case-state";
 import { Button, FormError, Label, Textarea } from "@/components/ui";
 
 /** 管理员审核操作卡：初审=通过/驳回；终审=定级 A/B/C/驳回。
@@ -42,7 +42,7 @@ export function ReviewForm({
               定级入库
             </Button>
             <span className="flex items-center gap-1.5 text-sm">
-              {(["A", "B", "C"] as const).map((g, i) => (
+              {GRADES.map((g, i) => (
                 <label key={g} className="flex cursor-pointer items-center gap-1 rounded-full border border-stone-border bg-pure-white px-2.5 py-1.5 transition-colors has-[:checked]:border-ink-black">
                   <input type="radio" name="grade" value={g} defaultChecked={i === 0} required className="accent-cyan-signal" />
                   <span className="font-medium">{g} 级</span>

@@ -3,6 +3,7 @@ import {
   canTransition,
   decideResubmit,
   decideReview,
+  stageForStatus,
   statusOnApprove,
   statusOnResubmit,
 } from "../case-state";
@@ -35,6 +36,15 @@ describe("案例状态机", () => {
     expect(canTransition("PUBLISHED", "REJECTED")).toBe(false); // 入库后终态
     expect(canTransition("PUBLISHED", "PENDING_FIRST")).toBe(false);
     expect(canTransition("REJECTED", "PUBLISHED")).toBe(false); // 驳回不能直接入库
+  });
+});
+
+describe("status → 环节逆向映射", () => {
+  it("待审状态映射到所属环节，其他状态无环节", () => {
+    expect(stageForStatus("PENDING_FIRST")).toBe("FIRST");
+    expect(stageForStatus("PENDING_FINAL")).toBe("FINAL");
+    expect(stageForStatus("PUBLISHED")).toBeNull();
+    expect(stageForStatus("REJECTED")).toBeNull();
   });
 });
 

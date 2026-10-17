@@ -64,7 +64,7 @@ export function CaseForm({
           type="file"
           required
           accept={ALLOWED_EXTENSIONS.join(",")}
-          className="w-full rounded-inputs border border-stone-muted bg-pure-white px-3 py-2.5 text-sm text-ink-black file:mr-3 file:rounded-full file:border-0 file:bg-stone-canvas file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink-black"
+          className="w-full rounded-inputs border border-stone-muted bg-pure-white px-3 py-2.5 text-sm text-ink-black file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-stone-canvas file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink-black file:transition-colors file:hover:bg-stone-muted"
         />
         <p className="mt-1 text-xs text-warm-gray">
           支持 {ALLOWED_EXTENSIONS.join(" ")}，单文件 ≤ {Math.round(MAX_FILE_SIZE / 1024 / 1024)}MB

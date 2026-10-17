@@ -7,17 +7,15 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAt
  * 单色纪律见 docs/adr/0006。
  */
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "dark" | "ghost" | "destructive";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
 
 const BUTTON_STYLES: Record<ButtonVariant, string> = {
-  // 青色实心：视口内至多一个的主行动
-  primary: "border border-cyan-edge bg-cyan-signal text-white hover:bg-cyan-edge",
+  // 青色实心：视口内至多一个的主行动；墨黑字（DESIGN.md，对比度 7.45:1）
+  primary: "border border-cyan-edge bg-cyan-signal text-ink-black hover:bg-cyan-edge",
   // 幽灵描边：次级动作
   secondary: "border border-stone-border text-ink-black hover:border-stone-muted",
   // 墨黑描边：审核「驳回」等与主行动并置的强次级动作（ADR-0006）
   outline: "border border-ink-black text-ink-black hover:bg-soot hover:text-white",
-  // 煤黑实心：深色强调（如附件下载）
-  dark: "bg-soot text-white hover:bg-ink-black",
   // 无边框文字按钮
   ghost: "text-warm-gray hover:text-ink-black",
   // 墨黑实心：破坏性操作（不用红，配 ConfirmButton 二次确认，ADR-0006）
@@ -31,7 +29,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${BUTTON_STYLES[variant]} ${className}`}
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${BUTTON_STYLES[variant]} ${className}`}
       {...props}
     />
   );

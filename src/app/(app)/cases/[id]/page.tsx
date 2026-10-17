@@ -61,7 +61,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
         </dl>
         <div className="mt-5">
           <a href={`/cases/${kase.id}/attachment`} download>
-            <Button variant="dark">下载附件</Button>
+            <Button variant="outline">下载附件</Button>
           </a>
         </div>
       </Card>

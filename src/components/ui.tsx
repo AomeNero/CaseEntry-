@@ -51,6 +51,23 @@ export function Card({
   );
 }
 
+/** 细线分隔列表容器（无内边距，列表行由调用方渲染） */
+export function ListCard({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 const FIELD_CLASS =
   "w-full rounded-inputs border border-stone-muted bg-pure-white px-3 text-base text-ink-black placeholder:text-ash-gray focus:outline-none focus:ring-2 focus:ring-cyan-signal";
 

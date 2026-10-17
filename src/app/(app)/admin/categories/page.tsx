@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { deleteCategoryAction } from "@/app/actions/admin";
 import { CategoryAddForm } from "@/components/admin/category-add-form";
 import { ConfirmButton } from "@/components/confirm-button";
-import { Card, Empty, PageTitle } from "@/components/ui";
+import { Card, Empty, ListCard, PageTitle } from "@/components/ui";
 
 export default async function AdminCategoriesPage() {
   await requireAdmin();
@@ -24,7 +24,7 @@ export default async function AdminCategoriesPage() {
       {categories.length === 0 ? (
         <Empty text="还没有分类，请先添加" />
       ) : (
-        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+        <ListCard>
           {categories.map((c) => (
             <div key={c.id} className="flex items-center justify-between px-5 py-3">
               <span className="text-sm text-ink-black">{c.name}</span>
@@ -44,7 +44,7 @@ export default async function AdminCategoriesPage() {
               </div>
             </div>
           ))}
-        </div>
+        </ListCard>
       )}
     </div>
   );

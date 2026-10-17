@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { userTotalPoints } from "@/lib/points-queries";
 import { ChangePasswordForm } from "@/components/change-password-form";
-import { Card, Empty, PageTitle } from "@/components/ui";
+import { Card, Empty, ListCard, PageTitle } from "@/components/ui";
 import { POINT_EVENT_LABELS, type PointEvent } from "@/lib/points-vocab";
 
 export default async function ProfilePage() {
@@ -41,7 +41,7 @@ export default async function ProfilePage() {
         {records.length === 0 ? (
           <Empty text="还没有积分记录" />
         ) : (
-          <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+          <ListCard>
             {records.map((r) => (
               <div key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
                 <div className="min-w-0">
@@ -53,7 +53,7 @@ export default async function ProfilePage() {
                 <span className="shrink-0 text-sm font-medium text-ink-black">+{r.points}</span>
               </div>
             ))}
-          </div>
+          </ListCard>
         )}
       </section>
 

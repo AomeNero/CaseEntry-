@@ -2,7 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { GradeBadge, StatusBadge } from "@/components/badges";
-import { Empty, PageTitle } from "@/components/ui";
+import { Empty, ListCard, PageTitle } from "@/components/ui";
 import type { CaseStatus, Grade } from "@/lib/case-state";
 
 export default async function MyCasesPage() {
@@ -19,7 +19,7 @@ export default async function MyCasesPage() {
       {cases.length === 0 ? (
         <Empty text="还没有提交过案例，去「录入案例」提交第一个吧" />
       ) : (
-        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+        <ListCard>
           {cases.map((c) => (
             <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
               <div className="min-w-0">
@@ -40,7 +40,7 @@ export default async function MyCasesPage() {
               </div>
             </article>
           ))}
-        </div>
+        </ListCard>
       )}
     </div>
   );

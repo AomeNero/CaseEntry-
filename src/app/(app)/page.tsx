@@ -2,12 +2,27 @@ import Link from "next/link";
 import { pointsLeaderboard, type LeaderboardRow } from "@/lib/points-queries";
 import { recentPublished } from "@/lib/case-queries";
 import { GradeBadge } from "@/components/badges";
-import { Card, Empty } from "@/components/ui";
+import { Card, Empty, ListCard } from "@/components/ui";
+
+/** 首页克制 hero：标题一处高亮 + 一句副题（高亮短语全站配额：首页/404 各一） */
+function Hero() {
+  return (
+    <section className="mb-10">
+      <h1 className="font-display text-heading-sm font-normal text-ink-black">
+        把好案例，
+        <span className="rounded bg-sky-wash px-2 text-cyan-edge">攒成积分</span>
+      </h1>
+      <p className="mt-2 text-sm text-warm-gray">
+        提交产品案例，经初审、终审定级入库，按等级发放积分。
+      </p>
+    </section>
+  );
+}
 
 function Board({ title, rows }: { title: string; rows: LeaderboardRow[] }) {
   return (
     <Card>
-      <h2 className="mb-2 text-sm font-medium text-warm-gray">{title}</h2>
+      <h2 className="mb-2 font-display text-subheading font-normal text-ink-black">{title}</h2>
       {rows.length === 0 ? (
         <p className="py-4 text-center text-sm text-warm-gray">暂无数据</p>
       ) : (
@@ -40,15 +55,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="mb-10">
-        <h1 className="font-display text-heading-sm font-normal text-ink-black">
-          把好案例，
-          <span className="rounded bg-sky-wash px-2 text-cyan-edge">攒成积分</span>
-        </h1>
-        <p className="mt-2 text-sm text-warm-gray">
-          提交产品案例，经初审、终审定级入库，按等级发放积分。
-        </p>
-      </section>
+      <Hero />
 
       <div className="grid gap-6 md:grid-cols-2">
         <Board title="积分总榜" rows={totalBoard} />
@@ -63,7 +70,7 @@ export default async function HomePage() {
         {feed.length === 0 ? (
           <Empty text="还没有入库案例——去「录入案例」提交第一个吧" />
         ) : (
-          <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+          <ListCard>
             {feed.map((c) => (
               <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div className="min-w-0">
@@ -81,7 +88,7 @@ export default async function HomePage() {
                 {c.grade && <GradeBadge grade={c.grade as "A" | "B" | "C"} />}
               </article>
             ))}
-          </div>
+          </ListCard>
         )}
       </section>
     </div>

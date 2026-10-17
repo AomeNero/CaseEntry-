@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { loginAction } from "@/app/actions/auth";
 import type { FormState } from "@/lib/form";
 import { Button, FormError, Input, Label } from "@/components/ui";
+import { SparkMark } from "@/components/spark-mark";
 
 const initial: FormState = {};
 
@@ -14,14 +15,7 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-sm rounded-feature-card border border-stone-border bg-pure-white p-8">
       <div className="mb-6 text-center">
-        <svg
-          viewBox="0 0 24 24"
-          className="mx-auto mb-3 h-5 w-5 text-ink-black"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" />
-        </svg>
+        <SparkMark className="mx-auto mb-3 h-5 w-5 text-ink-black" />
         <h1 className="font-display text-heading-sm font-normal text-ink-black">登录 CaseEntry</h1>
         <p className="mt-1.5 text-sm text-warm-gray">产品案例录入与积分系统</p>
       </div>

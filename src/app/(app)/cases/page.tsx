@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { listCases, listCategories } from "@/lib/case-queries";
 import { GradeBadge, StatusBadge } from "@/components/badges";
-import { Button, Card, Empty, Input, Label, Select, PageTitle } from "@/components/ui";
+import { Button, Card, Empty, Input, Label, ListCard, Select, PageTitle } from "@/components/ui";
 import { GRADES } from "@/lib/case-state";
 import { ROLE } from "@/lib/roles";
 
@@ -97,7 +97,7 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
       {cases.length === 0 ? (
         <Empty text="没有符合条件的案例" />
       ) : (
-        <div className="divide-y divide-stone-border rounded-cards border border-stone-border bg-pure-white">
+        <ListCard>
           {cases.map((c) => (
             <article key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
               <div className="min-w-0">
@@ -114,7 +114,7 @@ export default async function CasesPage({ searchParams }: { searchParams: Promis
               </div>
             </article>
           ))}
-        </div>
+        </ListCard>
       )}
     </div>
   );

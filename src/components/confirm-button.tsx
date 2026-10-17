@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 export function ConfirmButton({
   message,
   ...props
-}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "variant"> & { message: string }) {
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "variant" | "onClick"> & { message: string }) {
   return (
     <Button
       type="submit"

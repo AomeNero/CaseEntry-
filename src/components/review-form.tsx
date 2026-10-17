@@ -44,7 +44,7 @@ export function ReviewForm({
             <span className="flex items-center gap-1.5 text-sm">
               {(["A", "B", "C"] as const).map((g, i) => (
                 <label key={g} className="flex cursor-pointer items-center gap-1 rounded-full border border-stone-border bg-pure-white px-2.5 py-1.5 transition-colors has-[:checked]:border-ink-black">
-                  <input type="radio" name="grade" value={g} defaultChecked={i === 0} required />
+                  <input type="radio" name="grade" value={g} defaultChecked={i === 0} required className="accent-cyan-signal" />
                   <span className="font-medium">{g} 级</span>
                 </label>
               ))}
